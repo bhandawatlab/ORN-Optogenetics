@@ -47,6 +47,7 @@ meta.fs = 30;% frames/s
 meta.stopThresh = 0.5;% mm/s
 meta.rBound = 4;% cm
 meta.saveData = true;
+meta.adaptation = adaptation;
 
 % plotting parameters
 meta.plotFig = plotFig;%

@@ -4,9 +4,7 @@ adaptation = false;
 plotFig = false;
 plotSupplements = false;
 [meta] = setupMetaInfo(adaptation,plotFig,plotSupplements);
-meta.adaptation = adaptation;
 %meta.saveData = false;
-
 
 % set genotypes
 gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
@@ -39,17 +37,17 @@ genAll = reshape([gen_Retinal;gen_Control],[],1);
 % %--------------------------------------------------------------------------
 
 %% generate light intensity from radial positions
-% label = 'Head';
-% GenerateLightIntensity(label,meta);
-% 
-% %% get the spiking data
-% GenerateSpikingData(meta);
+label = 'Head';
+GenerateLightIntensity(label,meta);
+
+%% get the spiking data
+GenerateSpikingData(meta);
 
 %% generate the empirical fly object
 GenerateEmpiricalFlies(genAll,meta);
 
 %% plot all figures
-%PlotAllFiguresEmp(genAll,gen_Retinal,meta)
+PlotAllFiguresEmp(genAll,gen_Retinal,meta)
 
 %% generate synthetic flies
 agentModelMeta.delay = 0;% time since peak of filter
