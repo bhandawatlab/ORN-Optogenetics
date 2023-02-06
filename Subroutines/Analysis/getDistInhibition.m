@@ -1,27 +1,44 @@
-function [f_orco,time2State,exitTrajectory,timeOfState,kinOfState,biasOfState,dFSmooth,FSmooth] = ...
-    getDistInhibition(f_orco,crossingtype,plotFig)
-%close all;%clear;
-if isempty(f_orco)
-    load('DataModel/Orco Retinal_10Dec202060sAvg_32_25_3.mat', 'f_orco');
-end
-spd = f_orco.calcSpd;
+function [f_orco,exitTrajectory,timeOfState,kinOfState,biasOfState,dFSmooth,FSmooth] = ...
+    getDistInhibition(f_orco,crossingtype,timeInterval,plotFig)
+% getDistInhibition  calculates the turn optimality, and kinematics as a
+%   function of time since the start of the inhibition period
+%
+%   Inputs: f_orco = fly object
+%           crossingtype = 'enter' or 'exit' (default is 'exit'). Note
+%               that when using enter, this function looks at the period of
+%               steady state firing rate after being inside for a while.
+%           timeInterval = time inverval in ms to average f and df before
+%               state transition
+%           plotFig = true/false on whether to plot figures
+%
+%   Output: f_orco = fly object updated with the inhibition kinematics
+%           exitTrajectory = fly x 1 cell array of start and end index of
+%               steady state firing rate
+%           timeOfState = n x 2 matrix where first column is the fly number
+%               and second column is the time index of state transition
+%           kinOfState = kinematics
+%           biasOfState = turn optimality
+%           dFSmooth = average firing rate before each state transition
+%           FSmooth = average change in firing rate before each state 
+%               transition
+%   
 
-% calculate smoothed change in firing rate
-dF = f_orco.calcDeltaFR;%gradient(f_orco.spk);
-dF(:,end-1:end) = repmat(dF(:,end-2),1,2);
-hist = ceil(0.2.*f_orco.fs)-1;% 200 ms period
-dFSmooth = dF(:,1:end-hist);
-FSmooth = f_orco.spk(:,1:end-hist);
-for i = 2:hist+1
-    dFSmooth = dF(:,i:end-(hist+1)+i)+dFSmooth;
-    FSmooth = f_orco.spk(:,i:end-(hist+1)+i)+FSmooth;
+%close all;%clear;
+if isempty(crossingtype)
+    crossingtype = 'exit';
 end
-dFSmooth = [zeros(size(dFSmooth,1),hist),dFSmooth]./(hist+1);% average
-FSmooth = [zeros(size(FSmooth,1),hist),FSmooth]./(hist+1);% average
+
+% calculate smoothed history in firing rate and change in firing rate
+dt = diff(timeInterval);
+dF = f_orco.calcDeltaFR;
+[dFSmooth_dt,FSmooth_dt,~] = get_df_f_history(f_orco,dF,[0 dt]);
+offSet = round(timeInterval(1)./1000.*f_orco.fs);
+dFSmooth = [zeros(f_orco.nFly,offSet),dFSmooth_dt(:,1:end-offSet)];
+FSmooth = [zeros(f_orco.nFly,offSet),FSmooth_dt(:,1:end-offSet)];
 
 % get tracks where the firing rate doesn't change and is either during
 % inhibition or at inside steady state
-InsideSS = 18.55;
+InsideSS = f_orco.spkSS.inside;%18.55;% hard coded
 thresh = 50;
 exitTrajectory = cell(f_orco.nFly,1);
 spkHist = [];%zeros(1,121);
@@ -73,8 +90,9 @@ elseif strcmpi(crossingtype,'exit')
 end
 fprintf('Generating %s distributions\n',sce)
 
-time2State = cell(1,4);
-timeOfState = cell(1,4);
+timeOfState = cell(1,6);
+kinOfState = cell(1,6);
+biasOfState = cell(1,6);
 for params = 1:6
     m = f_orco.model.params{1,params};
     if params<3

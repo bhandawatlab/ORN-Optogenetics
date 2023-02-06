@@ -1,4 +1,5 @@
-function [newState] = getNewState(currState,TP,before,f,df)
+function [newState] = getNewState(currState,TP,before,f,df,fBaseline)
+
 nStateTransitions = numel(currState);
 nStates = 3;
 stateThresh = zeros(nStateTransitions,nStates);
@@ -18,9 +19,14 @@ for state = 1:numel(uniqueCurrStates)
 end
 
 % before
-nBaseline = sum(before);
-
+%nBaseline = sum(before);
 stateThresh(before,:) = TP.before(currState(before),:);
+
+% during baseline
+if ~isempty(uniqueCurrStates)
+    during_baseline = abs(df)<eps & abs(f-fBaseline)<eps;
+    stateThresh(during_baseline,:) = TP.duringBaseline(currState(during_baseline),:);
+end
 
 
 stateThreshCum = cumsum(stateThresh,2)>=rand(nStateTransitions,1);

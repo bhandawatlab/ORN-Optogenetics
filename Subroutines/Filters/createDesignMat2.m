@@ -1,4 +1,14 @@
 function [XStimAll,ntfilt] = createDesignMat2(stim,ntfilt,opts)
+% createDesignMat2  Creates a design matrix X to use in solving for the 
+%   linear filter b in the form y = Xb
+%
+%   Inputs: stim = n x time matrix of stimulus intensities
+%           ntfilt = duration of filter
+%           opts.ncells = number of flies (n)
+%
+%   Output: XStimAll = design matrix
+%           ntfilt = duration of filter
+%   
 
 for cellnum = 1:opts.ncells
     Stim = stim(cellnum,:)';lenStim = length(Stim);

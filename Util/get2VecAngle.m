@@ -1,4 +1,14 @@
 function [theta] = get2VecAngle(v,u,n,plotFig)
+% get2VecAngle  Find the angle between 2 vectors
+%
+% Inputs:
+%    v: vector 1
+%    u: vector 2
+%    n: vector normal to plane that vector 1 and 2 resides in
+
+% Outputs:
+%    theta: angle in degrees between bectors 1 and 2
+
 
 if isempty(n)
     theta = acosd(dot(v,u)./(norm(v).*norm(u)));

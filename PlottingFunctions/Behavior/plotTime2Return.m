@@ -24,6 +24,7 @@ for i = 1:numel(f_orcoAll)
     end
 end
 
+opts.plotStaggered = true;
 for i = 1:numel(f_orcoAll)
     if mod(i,12)==1
         figure(fNum);set(gcf,'Position',[2 42 838 924])
@@ -31,7 +32,7 @@ for i = 1:numel(f_orcoAll)
             'thresholds: |spd-baseline|<0.001, |dSpk|=0'})
         k = 1;fNum = fNum+1;
     end
-    yl = ceil(max(cell2mat(dur_baseline))./fs./20).*20;
+    opts.yl = [0 ceil(max(cell2mat(dur_baseline))./fs./20).*20];
     
     if k == 1
         plotLegend = true;
@@ -39,7 +40,8 @@ for i = 1:numel(f_orcoAll)
         plotLegend = false;
     end
     subplot(4,3,k);
-    violinPlots(dur_baseline{i}./fs,[0 yl],true,plotLegend);
+    violinPlotsStats(dur_baseline{i}'./fs,opts);
+    %violinPlots(dur_baseline{i}./fs,[0 yl],true,plotLegend);
     title(f_orcoAll{i}.id)
     ylabel('time (seconds)');
     k = k+1;

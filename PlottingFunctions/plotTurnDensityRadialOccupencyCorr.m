@@ -17,7 +17,7 @@ turnDiffNegOnly = turnDiff;
 turnDiffNegOnly(turnDiffNegOnly>0) = 0;
 
 
-figure;set(gcf,'Position',[2 42 838 924])
+figure(fNum);set(gcf,'Position',[2 42 838 924])
 xx = (turnDensAllGen{1,1}.x(1:end-1)+turnDensAllGen{1,1}.x(2:end))./2.*4;
 for g = 1:numel(genAll)
     subplot(5,3,g);
@@ -26,8 +26,9 @@ for g = 1:numel(genAll)
     yyaxis right;plot(xx,turnDiff(g,:));ylim([-0.1 0.1]);ylabel('Turn density diff')
     title(genAll{g})
 end
+fNum = fNum+1;
 
-figure;set(gcf,'Position',[2 42 838 924])
+figure(fNum);set(gcf,'Position',[2 42 838 924])
 xx = (turnDensAllGen{1,1}.x(1:end-1)+turnDensAllGen{1,1}.x(2:end))./2.*4;
 for g = 1:numel(genAll)
     subplot(5,3,g);
@@ -41,9 +42,9 @@ for g = 1:numel(genAll)
     xlabel('Turn density diff');%xticks([0:0.5:4])
     title([genAll{g} ' Rsq=' num2str(D(g).^2)])
 end
+fNum = fNum+1;
 
-
-figure;set(gcf,'Position',[2 42 838 924])
+figure(fNum);set(gcf,'Position',[2 42 838 924])
 hold on;
 x2 = [xx, fliplr(xx)];
 inBetween = [posDiff(1,:), fliplr(fliplr(zeros(size(xx))))];
@@ -53,8 +54,9 @@ plot(xx,zeros(size(xx)),'k')
 xticks([0:0.5:4])
 xlabel('radial position');ylabel('Radial Occupancy diff');
 title(genAll{1})
+fNum = fNum+1;
 
-figure;set(gcf,'Position',[2 42 838 924])
+figure(fNum);set(gcf,'Position',[2 42 838 924])
 hold on;
 x2 = [xx, fliplr(xx)];
 inBetween = [turnDiff(1,:), fliplr(fliplr(zeros(size(xx))))];
@@ -64,8 +66,9 @@ plot(xx,zeros(size(xx)),'k')
 xticks([0:0.5:4])
 xlabel('radial position');ylabel('Turn density diff');
 title(genAll{1})
+fNum = fNum+1;
 
-figure;set(gcf,'Position',[2 42 838 924])
+figure(fNum);set(gcf,'Position',[2 42 838 924])
 md1 = fitlm(sum(posDiffPosOnly,2),D);
 subplot(3,2,1);h = plot(md1);h(1).Marker = 'o';
 xlim([0.1 0.6]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary)])
@@ -103,6 +106,7 @@ er.LineStyle = 'none';
 scatter(x./2,D,'');
 ylabel('correlation')
 hold off
+fNum = fNum+1;
 
 
 end

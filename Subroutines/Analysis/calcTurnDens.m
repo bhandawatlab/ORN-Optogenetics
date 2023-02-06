@@ -1,4 +1,18 @@
 function turnDens = calcTurnDens(self,lab,s,key)
+% calcTurnDens  calculates the turn density
+%
+%   Inputs: self = fly object
+%           lab = label ('' = body, 'H' = head)
+%           s = structure with a cell array of time when turns occur.
+%           key = cell array key for s indicating the index of each state
+%           Note that both s and key are gotten from:
+%           self.getKinematicsCond(condNdx,key,thresh,timeInterval,varargin)
+%
+%   Output: turnDens = structure for turn density. x are the center
+%       of each bin, Bef/Dur is the density, and BefRaw/durRaw are the raw
+%       radial positions of turns
+%   
+
 dx = [0:0.05:1];%0:0.025:1;%
 dx(end) = 1.1;
 

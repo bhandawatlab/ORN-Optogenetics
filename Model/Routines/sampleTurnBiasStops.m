@@ -11,6 +11,13 @@ turnBias = m.during{state}(df,f);%+0.1;%+0.2;%0.7.*ones(size(df));
 turnBias(t<0) = m.before{state};
 
 turnBias(tt>0) = m.during_baseline{state};%m.before{state};
+if any(isnan(turnBias))
+    disp('meow stop')
+    turnBias(isnan(turnBias)) = 1;
+end
+%------------------
+%turnBias(isnan(turnBias)) = 1;
+%------------------
 
 %--------------------------------------------------------------------------
 % startAng = myatan((xPos(:,end)-xPos(:,end-1))',(yPos(:,end)-yPos(:,end-1))','degrees',2);

@@ -1,4 +1,13 @@
 function [self] = getMeanBound(self,fe)
+% getMeanBound  calculates the duration and radial velocity of movement at
+%   the arena boundary. 
+%
+%   Inputs: self = fly object
+%           fe = vector of first entry for each fly
+%
+%   Output: self = fly object updated with the arena boundary distributions
+%   
+
 boundNdx = find(cellfun(@(c)strcmp(c,'boundary'),self.states.key,'UniformOutput',true));
 boundaryCond = self.states.ndx==boundNdx;
 

@@ -1,4 +1,16 @@
 function radialProb = calcRadialProb(self,lab,border,stopSpd,dur)
+% calcRadialProb  calculates the radial occupancy.
+%
+%   Inputs: self = fly object
+%           lab = label ('' = body, 'H' = head)
+%           border = light arena border (in cm)
+%           stopSpd = speed threshold to consider as stops (in mm/s)
+%           dur = duration that is considered as long stops (in sec)
+%
+%   Output: radialProb = structure for radial occupancy. x are the center
+%       of each bin, y is the probability, and yRaw is the raw positions
+%   
+
 fe = getFirstEntry(self,lab,border);
 stops = self.calcSpd<stopSpd;
 longStops = false(size(stops));

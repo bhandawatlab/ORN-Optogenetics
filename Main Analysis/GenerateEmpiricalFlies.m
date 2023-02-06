@@ -1,27 +1,35 @@
-function [] = GenerateEmpiricalFlies(genAll,meta)
+function [f_orco_all] = GenerateEmpiricalFlies(genAll,meta)
+% GenerateEmpiricalFlies  Generates a fly object, then calculate the KNN
+%   space, baseline and boundary conditions, and crossing turn rate/
+%   kinematic filters
+%
+%   Inputs: genAll = cell array of genotype labels to create fly objects for
+%           meta = a structure with meta information
+%
+%   Output: f_orco_all = cell array of fly objects, where each cell is a
+%           different genotype
+%   
 
 border = meta.border;
 fs = meta.fs;
 rBound = meta.rBound;
 
+f_orco_all = cell(1,numel(genAll));
 for i = 1 :numel(genAll)
     tic;
     gen = genAll{i};
     % load data
-    load([pwd '\Data\DataGen\' gen '_March2022.mat'],'Data','curvPks','curvWalks','stopCond','boundCond')
+    load([meta.folderData '\' gen '_' meta.d '.mat'],'Data','curvPks','curvWalks','stopCond','boundCond')
     % load spike prediction
-    load([pwd '\Data\DataSpike\' gen '_SpkRate.mat'],'sps_pred2')
-    
-    % get the baseline 
-    baseline = mean(sps_pred2(:,30*fs:60*fs),'all');
-    % remove any artifacts from the linear filter
-    sps_pred2(:,1:30*fs) = round(baseline,4);
-    sps_pred2 = round(sps_pred2,4);
-    sps_pred2 = sps_pred2(:,1:size(Data.x,2));
+    load([meta.foldSpk '\' gen '_SpkRate.mat'],'sps_pred2','insideSS','baseline')
     
     % create flies object
-    f_orco = Flies(gen,Data.x,Data.y,Data.xHead,Data.yHead,sps_pred2,fs,rBound,...
-        Data.lightOn,curvPks,curvWalks,stopCond,boundCond,[]);
+    f_orco = Flies(gen,Data.x,Data.y,Data.xHead,Data.yHead,sps_pred2,...
+        insideSS,baseline,fs,rBound,Data.lightOn,curvPks,curvWalks,...
+        stopCond,boundCond,[]);
+    
+    spd = f_orco.calcSpd;
+    f_orco.states.ndx(spd<meta.stopThresh) = 3;
     
     % calculate first entry
     fe = f_orco.getFirstEntry('H',border);
@@ -29,15 +37,6 @@ for i = 1 :numel(genAll)
     % remove flies that do not enter
     f_orco = f_orco.rmvData(isnan(fe));
     fe = f_orco.getFirstEntry('H',border);
-    
-    %%%%
-    % for Or42a only
-    if strcmpi(gen,'Or42a Retinal')
-        fe(6) = nan;
-        f_orco = f_orco.rmvData(isnan(fe));
-        fe = f_orco.getFirstEntry('H',border);
-    end
-    %%%%
     
     % get the firing rate and change in firing rate
     spk = f_orco.spk;
@@ -67,14 +66,34 @@ for i = 1 :numel(genAll)
     % when df is 0 and there is a nonbaseline firing rate (inhibition period)
     %crossingtype = 'enter';
     crossingtype = 'exit';%plotFig = false;
-    [f_orco,~,~,~,~,~,~,~] = getDistInhibition(f_orco,crossingtype,meta.plotFig);
+    [f_orco,~,~,~,~,~,~] = getDistInhibition(f_orco,crossingtype,meta.timeInterval,meta.plotFig);
     
+    % speed, curvature, and angle when flies are leaving the arena boundary
+    f_orco = getLeavingBoundaryParam(f_orco,fe);
+    
+    close all
+    % probability of initiating a sharp turn linear filter when entering 
+    % and leaving the light border
+    transitionOnly = true;
+    plotFigure = false;
+    [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
+    f_orco.model.border.leave.ST_trans = b_leave(:,14);
+    f_orco.model.border.enter.ST_trans = b_enter(:,14);
+    % kinematics linear filters when entering and leaving the light border
+    [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = linearFilterAnalysisSpeedCurvature(f_orco,plotFigure);
+    f_orco.model.border.leave.speed = b_spdLeave(:,14);
+    f_orco.model.border.leave.curve = b_curvLeave(:,14);
+    f_orco.model.border.enter.speed = b_spdEnter(:,14);
+    f_orco.model.border.enter.curve = b_curvEnter(:,14);
+    
+    % older analysis, not used
 %     % get border choice (prob of turn) due to large changes in firing rate
 %     state = 2;% curved walk
 %     [f_orco] = getBorderTurnRate(f_orco,state,false);
 %     state = 1;% sharp turn
 %     [f_orco] = getBorderTurnRate(f_orco,state,false);
     
+    % printing to pdf file
     if meta.plotFig
         fName = ['Figures\' gen '_' meta.d meta.ext '_DataGen'];
         fNum = get(gcf,'Number');
@@ -88,9 +107,14 @@ for i = 1 :numel(genAll)
             'gslibpath','C:\Program Files\gs\gs9.50\lib');
     end
     
-    save(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
+    % saving the fly object
+    if meta.saveData
+        save(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
+    end
     close all
     fprintf('Finished generating %s object in %d seconds\n',gen,round(toc))
+    
+    f_orco_all{i} = f_orco;
 end
 
 end

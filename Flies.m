@@ -13,12 +13,13 @@ classdef Flies < handle
         rH
         curv
         spk
+        spkSS
         lightOn
         states
         model
     end
     methods
-        function [self] = Flies(id,x,y,xH,yH,spk,fs,rBound,lightOn,...
+        function [self] = Flies(id,x,y,xH,yH,spk,insideSS,baseline,fs,rBound,lightOn,...
                 curvPks,curvWalks,stopCond,boundCond,nPt)
             self.id = id;
             self.nFly = size(x,1);
@@ -39,6 +40,8 @@ classdef Flies < handle
             self.rH = sqrt((self.xH).^2+(self.yH).^2);
             [self.curv,~] = self.calcCurv;
             self.spk = spk(:,1:self.nPt);
+            self.spkSS.inside = insideSS;
+            self.spkSS.baseline = baseline;
             if ~(isempty(curvPks) || isempty(curvWalks) || isempty(stopCond)...
                     || isempty(boundCond))
                 [self.states.ndx, self.states.key] = getStates(curvPks,curvWalks,stopCond,boundCond,self.nPt-1);
@@ -165,13 +168,14 @@ classdef Flies < handle
         end
         
         % get the speed, curvature, and time for each condition
-        function [s,keyNdx] = getKinematicsCond(self,condNdx,key,thresh,varargin)
+        function [s,keyNdx] = getKinematicsCond(self,condNdx,key,thresh,timeInterval,varargin)
             if ~isempty(varargin)
                 ndxOnly = varargin{1};
             else
                 ndxOnly = [];
             end
-            [s,keyNdx] = calcKinematicsCond(self,condNdx,key,thresh,ndxOnly);
+            %[s,keyNdx] = calcKinematicsCond(self,condNdx,key,thresh,ndxOnly);
+            [s,keyNdx] = calcKinematicsCond_new(self,condNdx,key,thresh,ndxOnly,timeInterval);
         end
         
         % get the first entry
@@ -199,7 +203,9 @@ classdef Flies < handle
             goodNdx = ~badNdx;
             fly2 = Flies(self.id,self.x(goodNdx,:),self.y(goodNdx,:),...
                 self.xH(goodNdx,:),self.yH(goodNdx,:),self.spk(goodNdx,:),...
-                self.fs,self.rBound,self.lightOn(goodNdx,:),[],[],[],[],self.nPt);
+                self.spkSS.inside,self.spkSS.baseline,self.fs,self.rBound,...
+                self.lightOn(goodNdx,:),[],...
+                [],[],[],self.nPt);
             if ~isempty(self.states)
                 try
                     fly2.states.ndx = self.states.ndx(goodNdx,:);

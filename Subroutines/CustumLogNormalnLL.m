@@ -1,4 +1,16 @@
 function [nLL] = CustumLogNormalnLL(y,pAll,pCovAll,nMu,nSyn,p)
+% CustumLogNormalnLL  logNormal negative likelihood function
+%
+%   Inputs: y = vector of data points to evaluate
+%           pAll = 
+%           pCovAll = 
+%           nMu = 
+%           nSyn = 
+%           p = 
+%
+%   Output: nLL = negative loglikelihood
+%   
+
 % 
 % p_mu = (p(1:17));%11+6
 % p_sig = (p(18:34));%11+6

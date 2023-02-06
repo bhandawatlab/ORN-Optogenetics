@@ -16,14 +16,16 @@ turnBias(t<0) = m.before{state};
 turnBias(tt>0) = m.during_baseline{state};%m.before{state};
 
 inhibitionTBNdx = ~isnan(tSinceInhibition);
+turnBias_inh = turnBias;
 if any(inhibitionTBNdx) && ~isempty(m.inhibitionKin{state}{1})
     for s = 1:numel(uSlice)
         slice = uSlice(s);
-        turnBias(tSlice==slice) = m.inhibitionKin{state}{slice}(tSinceInhibition(tSlice==slice));
+        turnBias_inh(tSlice==slice) = m.inhibitionKin{state}{slice}(tSinceInhibition(tSlice==slice));
     end
 %     inhibitionTB = m.inhibitionKin{state}(tSinceInhibition);%+1 = force optimal
 %     turnBias(inhibitionTBNdx) = inhibitionTB(inhibitionTBNdx);
 end
+turnBias(inhibitionTBNdx) = turnBias_inh(inhibitionTBNdx);
 
 [~,thetaAll] = calcCurv(xPos,yPos,nFly,nPt);
 thetaAll = thetaAll+pi;
@@ -42,6 +44,14 @@ for fly = 1:nFly
     opt(fly) = sign(nanmean(theta));
 end
 opt(opt==0) = 1;
+
+if any(isnan(turnBias))
+    disp('meow walk')
+    turnBias(isnan(turnBias)) = 1;
+end
+%------------------
+%turnBias(isnan(turnBias)) = 1;
+%------------------
 
 % sample whether or not it's optimal
 direction = opt.*sign((rand(nFly,1)<turnBias)-0.5);%- added negative?

@@ -1,5 +1,35 @@
-function [] = getParams(f_orco, s, keyNdx, xGrid, yGrid, zGrid, ratio, ...
+function [estimationSuccess] = getParams(f_orco, s, keyNdx, xGrid, yGrid, zGrid, ratio, ...
     state, kin, Thresh, K, border, figN,sbpltN)
+% getParams  does a grid search to determine model params. Note that this
+%   does not automaticaly look for the elbow point. The user should look at
+%   the cost function to make a decision.
+%
+%   Inputs: f_orco = fly object
+%           s = structure of descriptions for each state (e.g. average 
+%               curvature, average speed, time ndx, prior ORN firing rate, 
+%               etc). Each field (description) is a fly x condition cell
+%               array. Each cell is a m x 1 vector of descriptors for each
+%               state instance
+%           keyNdx = Cell array describing the condition (each column) of
+%               the cell arrays 
+%           xGrid = x grid locations of KNN estimations (delta firing rate)
+%           yGrid = y grid locations of KNN estimations (firing rate)
+%           zGrid = z grid locations of KNN estimations (time since first entry)
+%           ratio = the radii of the bounding ellipse for KNN estimations
+%           state = index of the state that you are looking at
+%           kin = string stating what kinematic feature you are looking at
+%               (i.e. 'spd','avgCurv','totCurv', or 'dur')
+%           Thresh = plotting purposes only (proposed thresh) - not
+%               relevent for grid search
+%           K = plotting purposes only (proposed K) - not
+%               relevent for grid search
+%           border = radial light border (in cm)
+%           figN = figure number to plot results to
+%           sbpltN = subplot number to plot results to ([row, column, index])
+%
+%   Output: estimationSuccess = true/false whether the analysis was
+%           successful
+%   
 
 % calculate time from first entry for the beginning of each state
 fe = f_orco.getFirstEntry('H',border);
@@ -69,23 +99,29 @@ for k = 1:numel(K2Cons)
         cost(k,t) = nanmean(semVals)./K2Cons(k)./thresh2Cons(t);
     end
 end
-% plot the cost function
-figure(figN(1));subplot(sbpltN(1),sbpltN(2),sbpltN(3));
-[kk,tt] = ndgrid(K2Cons,thresh2Cons);
-surf(log2(kk),tt,cost);hold on;scatter3(log2(K),Thresh,cost(kk==K & tt==Thresh),1000,'.r')
-xlabel('K');ylabel('Threshold')
-zlabel('cost function (mean(sem)/(K*thresh))');view(135,45)
-%zlabel('cost function (mean(sem))');view(135,45)
-colormap(parula)
-yticks(thresh2Cons(2:2:end));ylim([0.5 5]);xlim([4 8])
-set (gca, 'XTickLabel', strcat('2^{',num2str(log2(K2Cons(:))),'}'));
+if ~all(isnan(cost),'all')
+    % plot the cost function
+    figure(figN(1));subplot(sbpltN(1),sbpltN(2),sbpltN(3));
+    [kk,tt] = ndgrid(K2Cons,thresh2Cons);
+    surf(log2(kk),tt,cost);hold on;scatter3(log2(K),Thresh,cost(kk==K & tt==Thresh),1000,'.r')
+    xlabel('K');ylabel('Threshold')
+    zlabel('cost function (mean(sem)/(K*thresh))');view(135,45)
+    %zlabel('cost function (mean(sem))');view(135,45)
+    colormap(parula)
+    yticks(thresh2Cons(2:2:end));ylim([0.5 5]);xlim([4 8])
+    set (gca, 'XTickLabel', strcat('2^{',num2str(log2(K2Cons(:))),'}'));
 
-figure(figN(2));subplot(sbpltN(1),sbpltN(2),sbpltN(3));
-imagesc(thresh2Cons,log2(K2Cons),cost);hold on;scatter(Thresh,log2(K),1000,'.r')
-xlabel('Threshold');ylabel('K');
-colormap(parula);colorbar;
-xticks(thresh2Cons(2:2:end));xlim([0.5 5]);ylim([3.5 8.5])
-set (gca, 'YTickLabel', strcat('2^{',num2str(log2(K2Cons(:))),'}'));
+    figure(figN(2));subplot(sbpltN(1),sbpltN(2),sbpltN(3));
+    imagesc(thresh2Cons,log2(K2Cons),cost);hold on;scatter(Thresh,log2(K),1000,'.r')
+    xlabel('Threshold');ylabel('K');
+    colormap(parula);colorbar;
+    xticks(thresh2Cons(2:2:end));xlim([0.5 5]);ylim([3.5 8.5])
+    set (gca, 'YTickLabel', strcat('2^{',num2str(log2(K2Cons(:))),'}'));
+    estimationSuccess = true;
+else
+    disp('Not enough data points to estimate K and Threshold for KNN space ')
+    estimationSuccess = false;
+end
 end
 
 

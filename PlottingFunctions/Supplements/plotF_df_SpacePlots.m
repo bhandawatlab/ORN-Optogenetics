@@ -9,7 +9,7 @@ for g = 1:numel(f_orcoAll)
     hist = ceil(0.2.*f_orco.fs)-1;%200 ms history
     
     % calculate the different states
-    tic;[cross] = f_orco.getCrossingBaseline('H',border,4.8,0);toc;
+    tic;[cross] = f_orco.getCrossingBaseline('H',border,4.8,0);%toc;
     dSpk = f_orco.calcDeltaFR;
     baselineSpk = f_orco.spk(1);
     

@@ -62,9 +62,16 @@ stopSpd = meta.stopThresh;
 [fNum] = plotRadialOccupancy(f_orcoAll,'H',meta.border,stopSpd,0,fNum);% plots radial occupancy with stops
 printFigures(fNum,'Figures/','RadialOccupancy_noStops_allGenotypes')
 
+% plot KS test of retinal vs control (only for time averaged)
+if meta.adaptation == false
+    close all;fNum = 1;
+    [fNum,~,~] = plotStatTestRetContKNN(reshape(f_orcoAll,2,[]),meta.States2Plot_KNN,0,0.05,fNum);
+    printFigures(fNum,['Figures/' meta.foldName],'KNN_Control_Retinal_KS-test_p_05_color2')
+end
+
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% plotting general analysis figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% plotting analysis figures for retinal only %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% (for retinal only)
 f_orcoAll = cell(1,numel(genRetinal));
@@ -72,11 +79,19 @@ for i = 1:numel(genRetinal)
     gen = genRetinal{i};
     try
         load(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');
+        % perform permutation test across time slices for retinal flies (only for adaptation)
+        if meta.adaptation == true
+            [f_orco] = calcKNN_Habituation_PermutationTest(f_orco,1:4);
+        end
         f_orcoAll{i} = f_orco;
     catch
         f_orcoAll{i} = [];
     end
 end
+
+% close all;fNum = 1;
+% [fNum] = compareKNN(f_orcoAll,fNum);
+% printFigures(fNum,'Figures/','KNN_3_OR_smaller_v_larger_dataset')
 
 %%
 % create subfolders for plots
@@ -87,44 +102,10 @@ for i = 1:numel(KNN_folders)
         mkdir(['Figures/' foldName KNN_folders{i}])
     end
 end
-%% 
-% plot spatial-temporal position
-close all;fNum = 1;
-for i = 1:numel(f_orcoAll)
-    if mod(i,6)==1
-        figure(fNum);set(gcf,'Position',[2 42 1000 924])
-        fNum = fNum+1;k = 1;
-    end
-    subplot(3,2,k);
-    [y_emp,xCent,yCent] = plotRadialPosition(f_orcoAll{i},meta.border,'after',true,...
-        'dt',2.*f_orcoAll{i}.fs,'clims',[0 0.01]);toc;
-    title(f_orcoAll{i}.id)
-    k = k+1;
-    
-    if i == numel(f_orcoAll) || k==7
-        print('-bestfit','-painters','-dpdf',['Figures/SpatialTemporal_Density_' num2str(fNum-1)]);
-    end
-end
-printFigures(fNum,'Figures/','SpatialTemporal_Density_AllGenotypes')
-
-% % plot spatial-temporal position
-% close all;fNum = 1;
-% for i = 1:numel(f_orcoAll)
-%     if mod(i,6)==1
-%         figure(fNum);set(gcf,'Position',[2 42 1000 924])
-%         fNum = fNum+1;k = 1;
-%     end
-%     subplot(3,2,k);
-%     [y_emp,xCent,yCent] = plotRadialPosition(f_orcoAll{i},meta.border,'after',true,...
-%         'dt',2.*f_orcoAll{i}.fs,'clims',[0 0.01]);toc;
-%     title(f_orcoAll{i}.id)
-%     k = k+1;
-% end
-% printFigures(fNum,'Figures/','SpatialTemporal_Density_AllGenotypes')
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% plotting general analysis figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% plotting one time analysis figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if meta.plotSupplements == true
     %%
@@ -168,11 +149,64 @@ if meta.plotSupplements == true
     end
     printFigures(fNum+1,'Figures/','KNN_formulation_allGenotypes')
     
+    %%
+    % plot time 2 return
+    close all;fNum = 1;
+    fNum = plotTimeSteadyState(f_orcoAll,meta.border,fNum);
+    printFigures(fNum,'Figures/','TimeAtSteadyStateVsCrossing_allGenotypes')
+    
+    %%
+    % plot turn triggered average
+    close all;fNum = 1;
+    plotSchematicTTA(f_orcoAll{1});
+    printFigures(fNum,'Figures/','TurnTriggeredAverageExampleTracks')
+    
+    %%
+    % plot spatial-temporal position
+    close all;fNum = 1;
+    for i = 1:numel(f_orcoAll)
+        if mod(i,6)==1
+            figure(fNum);set(gcf,'Position',[2 42 1000 924])
+            fNum = fNum+1;k = 1;
+        end
+        subplot(3,2,k);
+        [y_emp,xCent,yCent] = plotRadialPosition(f_orcoAll{i},meta.border,'after',true,...
+            'dt',2.*f_orcoAll{i}.fs,'clims',[0 0.01]);toc;
+        title(f_orcoAll{i}.id)
+        k = k+1;
+
+        if i == numel(f_orcoAll) || k==7
+            print('-bestfit','-painters','-dpdf',['Figures/SpatialTemporal_Density_' num2str(fNum-1)]);
+        end
+    end
+    printFigures(fNum,'Figures/','SpatialTemporal_Density_AllGenotypes')
+    
 end
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% plotting general analysis figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% plotting KNN based analysis figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 
+% plot permutation test across time slices for retinal flies (only for adaptation)
+if meta.adaptation == true
+    close all;fNum = 1;
+    %%% plot KS test across time slices for retinal flies (only for adaptation)
+    %%%[~,currState,currKin] = plotStatTestAdaptationKNN(f_orcoAll,meta.States2Plot_KNN,meta.tSlice,fNum);
+    [~,currState,currKin] = plotKNN_Habituation_PermutationTest...
+        (f_orcoAll,1:4,meta.tSlice,fNum);
+    plotKNNDistributions(currState,currKin,['Figures/' foldName 'KNN_Emp_KS_test/'],...
+        '__allGenotypes')
+end
+
+%%
+% plot comparison of different distribution fits
+if meta.adaptation == false
+    close all;fNum = 1;
+    fNum = plotDistributionComparisons(f_orcoAll,meta.States2Plot_KNN,fNum);
+    %[fNum,~,~] = plotDistributionComparisons2(f_orcoAll,meta.States2Plot_KNN,fNum);
+    printFigures(fNum,['Figures/' foldName],'KNN_Distribution_Fit_2')
+end
+
 %%
 % plot transition probability image and relative colormap
 close all;fNum = 1;
@@ -220,6 +254,22 @@ close all;fNum = 1;
     meta.tSlice,'imagesc','relative',fNum);
 plotKNNDistributions(currState,currKin,['Figures/' foldName 'KNN_Relative_Heatmap/'],...
     '_relative_heatmap_allGenotypes')
+
+%%
+% plot KNN kinematic distributions standev image and absolute colormap
+close all;fNum = 1;
+[~,currState,currKin] = plotKNNKinematicsSTD(f_orcoAll,meta.States2Plot_KNN,...
+    meta.tSlice,'imagesc','absolute',fNum);
+plotKNNDistributions(currState,currKin,['Figures/' foldName 'KNN_Absolute_Heatmap/'],...
+    '_absolute_heatmap_allGenotypes_std')
+
+%%
+% plot KNN kinematic distributions standev image and relative colormap
+close all;fNum = 1;
+[~,currState,currKin] = plotKNNKinematicsSTD(f_orcoAll,meta.States2Plot_KNN,...
+    meta.tSlice,'imagesc','relative',fNum);
+plotKNNDistributions(currState,currKin,['Figures/' foldName 'KNN_Relative_Heatmap/'],...
+    '_relative_heatmap_allGenotypes_std')
 
 %%
 % plot turn optimality during inhibition for sharp turn
@@ -295,3 +345,20 @@ ps2pdf('psfile', [folder figTitle '.ps'], 'pdffile', [folder figTitle '.pdf'], '
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');
 end
+
+%%% some old code
+% % plot spatial-temporal position
+% close all;fNum = 1;
+% for i = 1:numel(f_orcoAll)
+%     if mod(i,6)==1
+%         figure(fNum);set(gcf,'Position',[2 42 1000 924])
+%         fNum = fNum+1;k = 1;
+%     end
+%     subplot(3,2,k);
+%     [y_emp,xCent,yCent] = plotRadialPosition(f_orcoAll{i},meta.border,'after',true,...
+%         'dt',2.*f_orcoAll{i}.fs,'clims',[0 0.01]);toc;
+%     title(f_orcoAll{i}.id)
+%     k = k+1;
+% end
+% printFigures(fNum,'Figures/','SpatialTemporal_Density_AllGenotypes')
+%%%

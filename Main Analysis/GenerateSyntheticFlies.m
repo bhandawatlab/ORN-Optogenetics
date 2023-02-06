@@ -3,7 +3,7 @@ C = strsplit(fName,'.');
 fName2 = [C{1} '_flies.mat'];
 [synth_orco,f_orco] = getSyntheticFlies([meta.syntheticFlyFold fName],gen,meta);
 if savefile
-    save([meta.syntheticFlyFold fName2],'synth_orco','f_orco');
+    save([meta.syntheticFlyFold fName2],'synth_orco','f_orco','-v7.3');
 end
 
 end
@@ -25,7 +25,8 @@ synthFlys.spk = synthFlys.spk(:,1:size(synthFlys.x,2));
 
 % create flies object
 synth_orco = Flies(gen,synthFlys.x,synthFlys.y,synthFlys.x,synthFlys.y,...
-    synthFlys.spk,fs,rBound,synthFlys.lightOn,[],[],[],[],size(synthFlys.x,2));
+    synthFlys.spk,f_orco.spkSS.inside,f_orco.spkSS.baseline,fs,rBound,...
+    synthFlys.lightOn,[],[],[],[],size(synthFlys.x,2));
 
 synth_orco.states.ndx = state;
 synth_orco.states.key = {'sharp turns';'curved walks';'stops';'boundary'};
@@ -70,7 +71,7 @@ synth_orco.model.IntensitySpace.convIV = convVI;% conversion from voltage to int
 % when df is 0 and there is a nonbaseline firing rate (inhibition period)
 %crossingtype = 'enter';
 crossingtype = 'exit';%plotFig = false;
-[synth_orco,~,~,~,~,~,~,~] = getDistInhibition(synth_orco,crossingtype,meta.plotFig);
+[synth_orco,~,~,~,~,~,~] = getDistInhibition(synth_orco,crossingtype,meta.timeInterval,meta.plotFig);
 end
 
 

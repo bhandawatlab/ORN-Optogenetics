@@ -1,6 +1,25 @@
 function [] = violinPlots(data,yl,plotdist,plotLegend)
-[f,~] = ksdensity(data,data,'Support','positive');
-[f_dens,x_dens] = ksdensity(data,linspace(yl(1),yl(2),200),'Support','positive');
+% violinPlots  plots violin plots with box plots and data scatter
+%
+% Inputs:
+%    data: vector of data points
+%    yl: y-limit
+%    plotdist: True/false of whether to plot the distribution
+%    plotLegend: True/false of whether to plot the legend
+%
+
+if ~isempty(yl)
+    if yl(1)>=0
+        [f,~] = ksdensity(data,data,'Support','positive');
+        [f_dens,x_dens] = ksdensity(data,linspace(yl(1),yl(2),200),'Support','positive');
+    else
+        [f,~] = ksdensity(data,data);
+        [f_dens,x_dens] = ksdensity(data,linspace(yl(1),yl(2),200));
+    end
+else
+    [f,~] = ksdensity(data,data);
+    [f_dens,x_dens] = ksdensity(data);
+end
 m_f = max(f_dens);
 f = f./m_f;
 x = (rand(size(data))-0.5).*f;

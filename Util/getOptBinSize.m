@@ -17,7 +17,6 @@ function [dxOpt] = getOptBinSize(data,type)
 % Outputs
 % dxOpt: optimal bin size
 
-% 2021 Liangyu Tao
 
 if ~isempty(data)
     n = numel(data);

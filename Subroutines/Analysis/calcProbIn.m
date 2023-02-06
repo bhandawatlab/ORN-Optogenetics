@@ -1,5 +1,21 @@
 function [bin_inside_rim_sliding_SEM,bin_inside_rim_sliding_mean,inside_rim,framesinBin]...
     = calcProbIn(self,lab,border,startPts)
+% calcProbIn  calculates probability (smoothed proportion) of flies inside
+%   the light zone at any given time. note that the bin size is preset to
+%   200 ms
+%
+%   Inputs: self = fly object
+%           lab = label ('' = body, 'H' = head)
+%           border = light arena border (in cm)
+%           startPts = fly x 1 vector indicating the time delay shift (
+%               useful when aligning by first entry)
+%
+%   Output: bin_inside_rim_sliding_SEM = SEM for prob inside
+%           bin_inside_rim_sliding_mean = prob inside
+%           inside_rim = boolean whether the fly is inside the light zone
+%           framesinBin = number of frames used in a 200 ms bin
+%   
+
 inside_rimTmp = self.(['r' lab])'<border;
 time_to_end = size(inside_rimTmp,1)-min(startPts)+1;
 inside_rim = nan(time_to_end,self.nFly);

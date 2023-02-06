@@ -1,17 +1,17 @@
 function [] = agentModelHandle(genAll,meta,agentModelMeta,generateFlies)
 
-tau = agentModelMeta.tau;
-C = agentModelMeta.C;
+delay = agentModelMeta.delay;
+dur = agentModelMeta.dur;
 
 progressbar(0,0,0)
 for g = 1:numel(genAll)
     gen = genAll{g};
-    for ii = 1:numel(tau)
-        for jj = 1:numel(C)
-            currTau = tau(ii);
-            currC = C(jj);
-            cond = ['_CWTau' strrep(num2str(currTau),'.','') ...
-                '_CWC' strrep(num2str(currC),'.','')];
+    for ii = 1:numel(dur)
+        for jj = 1:numel(delay)
+            currDur = dur(ii);
+            currDelay = delay(jj);
+            cond = ['_CWdur' strrep(num2str(currDur),'.','') ...
+                '_CWdelay' strrep(num2str(currDelay),'.','')];
             
             try
                 if generateFlies
@@ -25,18 +25,21 @@ for g = 1:numel(genAll)
                     % set up synthetic fly model parameters
                     params.fs = f_orco.fs;%30 hz
                     params.len = f_orco.nPt;%1080;
-                    params.totFly = 20;
+                    params.totFly = 15;
                     params.posInit = [];
                     params.border = meta.border./meta.rBound;
                     params.lightOnTime = ceil(params.len./2);%540;% time of light on
                     params.bLFP = bLFP;
                     params.bRate = bRate;
                     params.LLFfs = LLFfs;
-                    params.C = currC;
-                    params.tau = currTau;
+                    params.delay = currDelay;
+                    params.dur = currDur;
                     nIt = 10;
                     params.baseLineFR = f_orco.spk(1);
                     
+                    %RunAndTumbleFinal032722(f_orco,params);
+                    %RunAndTumbleKNNLinFilter(f_orco,params);
+                        
                     p = gcp('nocreate'); % If no pool, do not create new one.
                     if isempty(p)
                         p = parpool('local');
@@ -47,7 +50,7 @@ for g = 1:numel(genAll)
                         [synthFlysC{i},stateC{i},nTurnC{i},spdAllC{i},curvAllC{i},...
                             phiAllC{i},dSpkC{i},allAngC{i},lambda_CWC{i},lambda_StopC{i},...
                             dfSmoothC{i},fSmoothC{i},tt_baseline{i}]...
-                            = RunAndTumbleFinal032722(f_orco,params);
+                            = RunAndTumbleKNNLinFilter(f_orco,params);
                     end
                     toc;
                     synthFlys = synthFlysC{1};
@@ -121,7 +124,7 @@ for g = 1:numel(genAll)
                     
                     toc;
                     cab(1);
-                    progressbar(g./numel(genAll),ii./numel(tau),jj./numel(C))
+                    progressbar(g./numel(genAll),ii./numel(dur),jj./numel(delay))
                 else
                     fName = ['RT_run' gen '_' meta.d '' cond '.mat'];
                     fName2 = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];

@@ -1,4 +1,17 @@
-function [] = getBaselineKinematicsEarlyLate(self,border,condNdx,key)
+function [self] = getBaselineKinematicsEarlyLate(self,border,condNdx,key)
+% getBaselineKinematicsEarlyLate  calculates the kinematics when flies
+%   are at baseline firing. This is split into before first entry, the
+%   first 2 state instances after each exit, and lateral state instances
+%   after each exit
+%
+%   Inputs: self = fly object
+%           border = radial position of light border (in cm)
+%           condNdx = fly x time matric of the general firing rate regime
+%           the fly is in (e.g. 1=before, 2=below, 3=baseline, and 4=above)
+%           key = cell array key for condNdx
+%
+%   Output: self = fly object updated with the baseline kinematics
+%   
 
 stateDistEarly = cell(4,1);stateDistLate = cell(4,1);stateDistBefore = cell(4,1);
 

@@ -1,5 +1,5 @@
 function [closestPtBef,closestPtAft,idxB] = findBeforeAfter(A,B,type)
-% This function finds the closest value of B to each value of A. 
+% findBeforeAfter  This function finds the closest value of B to each value of A. 
 %
 % Inputs:
 %    A: A matrix of values
@@ -9,7 +9,7 @@ function [closestPtBef,closestPtAft,idxB] = findBeforeAfter(A,B,type)
 %       closest point that is larger than A.
 %       'before' = find the closest point of B that is smaller than A.
 %       'after' = find the closest point of B that is larger than A.
-
+%
 % Outputs:
 %    closestPtBef: The values of B that is closest to and smaller than each
 %           point of A (same dimensions as A)

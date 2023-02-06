@@ -348,7 +348,7 @@ for g = 1:numel(f_orcoAll)
         end
         thresh = 0.1;
         key = {'before','below','baseline','above'};
-        [s,keyNdx] = currEmpSynth{type}.getKinematicsCond(condNdx,key,thresh,true);
+        [s,keyNdx] = currEmpSynth{type}.getKinematicsCond(condNdx,key,thresh,[0 200],true);%%
         turnDens = currEmpSynth{type}.getTurnDens('H',s,keyNdx);
         
         turnDens.x(end) = 1;
@@ -374,7 +374,7 @@ for g = 1:numel(f_orcoAll)
     title({currEmpSynth{1}.id, ' During'})
     
     if k == 1
-        legend({'emp Head','synth'})
+        %legend({'emp Head','synth'})
     end
     
     k = k+2;
