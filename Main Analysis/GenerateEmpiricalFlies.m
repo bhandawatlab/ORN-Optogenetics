@@ -13,9 +13,11 @@ function [f_orco_all] = GenerateEmpiricalFlies(genAll,meta)
 border = meta.border;
 fs = meta.fs;
 rBound = meta.rBound;
+plotFigure = false;
+genAll(cellfun(@(x) isempty(x),genAll)) = [];
 
 f_orco_all = cell(1,numel(genAll));
-for i = 1 :numel(genAll)
+for i = 1:numel(genAll)
     tic;
     gen = genAll{i};
     % load data
@@ -46,14 +48,14 @@ for i = 1 :numel(genAll)
     % baseline firing rate, baseline firing rate after FE, and above
     % baseline firing rate
     condNdx = zeros(size(spk));condNdx(spk>baseline) = 4;
-    condNdx(spk<baseline) = 2;condNdx(abs((spk-baseline))<0.001 & dSpk==0) = 3;
+    condNdx(spk<baseline) = 2;condNdx(abs((spk-baseline))<0.01 & dSpk<0.1) = 3;
     for j = 1:f_orco.nFly
         condNdx(j,1:fe(j)-1) = 1;
     end
     key = {'before','below','baseline','above'};
     
     % get the kinematics and decision space of the flies
-    GetKinematicModelParams(f_orco,condNdx,key,fe,meta,true);
+    GetKinematicModelParams(f_orco,condNdx,key,fe,meta,plotFigure);
     
     % intensity space of the arena
     load('Data/Intensity_space2.mat','xN','p','Intensity_spaceN','convIV','convVI')
@@ -65,22 +67,20 @@ for i = 1 :numel(genAll)
     
     % when df is 0 and there is a nonbaseline firing rate (inhibition period)
     %crossingtype = 'enter';
-    crossingtype = 'exit';%plotFig = false;
-    [f_orco,~,~,~,~,~,~] = getDistInhibition(f_orco,crossingtype,meta.timeInterval,meta.plotFig);
+    crossingtype = 'exit';
+    [f_orco,~,~,~,~,~,~] = getDistInhibition(f_orco,crossingtype,meta.timeInterval,plotFigure);
     
     % speed, curvature, and angle when flies are leaving the arena boundary
-    f_orco = getLeavingBoundaryParam(f_orco,fe);
+    f_orco = getLeavingBoundaryParam(f_orco,fe,plotFigure);
     
-    close all
     % probability of initiating a sharp turn linear filter when entering 
     % and leaving the light border
     transitionOnly = true;
-    plotFigure = false;
     [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
     f_orco.model.border.leave.ST_trans = b_leave(:,14);
     f_orco.model.border.enter.ST_trans = b_enter(:,14);
     % kinematics linear filters when entering and leaving the light border
-    [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = linearFilterAnalysisSpeedCurvature(f_orco,plotFigure);
+    [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = linearFilterAnalysisSpeedCurvature(f_orco,meta,plotFigure);
     f_orco.model.border.leave.speed = b_spdLeave(:,14);
     f_orco.model.border.leave.curve = b_curvLeave(:,14);
     f_orco.model.border.enter.speed = b_spdEnter(:,14);
@@ -93,23 +93,23 @@ for i = 1 :numel(genAll)
 %     state = 1;% sharp turn
 %     [f_orco] = getBorderTurnRate(f_orco,state,false);
     
-    % printing to pdf file
-    if meta.plotFig
-        fName = ['Figures\' gen '_' meta.d meta.ext '_DataGen'];
-        fNum = get(gcf,'Number');
-        for f = 1:fNum-1
-            figure(f);
-            print('-painters','-dpsc2',[fName '.ps'],'-loose','-append');
-        end
-        ps2pdf('psfile', [fName '.ps'], 'pdffile', [fName '.pdf'], 'gspapersize', 'letter',...
-            'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
-            'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
-            'gslibpath','C:\Program Files\gs\gs9.50\lib');
-    end
+%     % printing to pdf file
+%     if meta.plotFig
+%         fName = [meta.plotFold gen '_' meta.d meta.ext '_DataGen'];
+%         fNum = get(gcf,'Number');
+%         for f = 1:fNum-1
+%             figure(f);
+%             print('-painters','-dpsc2',[fName '.ps'],'-loose','-append');
+%         end
+%         ps2pdf('psfile', [fName '.ps'], 'pdffile', [fName '.pdf'], 'gspapersize', 'letter',...
+%             'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
+%             'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
+%             'gslibpath','C:\Program Files\gs\gs9.50\lib');
+%     end
     
     % saving the fly object
     if meta.saveData
-        save(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
+        save([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
     end
     close all
     fprintf('Finished generating %s object in %d seconds\n',gen,round(toc))

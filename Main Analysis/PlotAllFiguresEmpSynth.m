@@ -1,17 +1,17 @@
 function [] = PlotAllFiguresEmpSynth(genAll,meta,agentModelMeta)
 
 % set parameters
-tau = agentModelMeta.tau;
-C = agentModelMeta.C;
+dur = agentModelMeta.dur;
+delay = agentModelMeta.delay;
 
 plotFolder = [meta.syntheticPlotFold];
 
-for ii = 1:numel(tau)
-    for jj = 1:numel(C)
-        currTau = tau(ii);
-        currC = C(jj);
-        cond = ['_CWTau' strrep(num2str(currTau),'.','') ...
-            '_CWC' strrep(num2str(currC),'.','')];
+for ii = 1:numel(dur)
+    for jj = 1:numel(delay)
+        currDur = dur(ii);
+        currDelay = delay(jj);
+        cond = ['_CWdur' strrep(num2str(currDur),'.','') ...
+                '_CWdelay' strrep(num2str(currDelay),'.','')];
         
         f_orcoAll = cell(1,numel(genAll));
         synth_orcoAll = cell(1,numel(genAll));
@@ -21,8 +21,8 @@ for ii = 1:numel(tau)
             fName = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
             load([meta.syntheticFlyFold fName],'f_orco','synth_orco')
             
-            f_orco.id = [f_orco.id ' tau=' num2str(currTau) ', C=' num2str(currC)];
-            synth_orco.id = [synth_orco.id ' tau=' num2str(currTau) ', C=' num2str(currC)];
+            f_orco.id = [f_orco.id ' dur=' num2str(currDur) ', delay=' num2str(currDelay)];
+            synth_orco.id = [synth_orco.id ' dur=' num2str(currDur) ', delay=' num2str(currDelay)];
             f_orcoAll{k} = f_orco;
             synth_orcoAll{k} = synth_orco;
             k = k+1;
@@ -285,19 +285,22 @@ for g = 1:numel(f_orcoAll)
         
         subplot(6,4,k);
         % plot radial probability
-        plot(radProb.before.x.*currEmpSynth{i}.rBound,...
-            radProb.before.y,'Color',cc{i},'Linewidth',1);hold on;
+         p{i} = shadedErrorBar(radProb.before.x.*currEmpSynth{i}.rBound,radProb.before.weightedMu,...
+            radProb.before.sem,'lineprops',{['-' cc{i}],'Linewidth',1});hold on; 
+%         plot(radProb.before.x.*currEmpSynth{i}.rBound,...
+%             radProb.before.y,'Color',cc{i},'Linewidth',1);hold on;
         
         subplot(6,4,k+1);
-        plot(radProb.during.x.*currEmpSynth{i}.rBound,...
-            radProb.during.y,'Color',cc{i},'Linewidth',1);hold on;
-        
-        
+        shadedErrorBar(radProb.during.x.*currEmpSynth{i}.rBound,radProb.during.weightedMu,...
+            radProb.during.sem,'lineprops',{['-' cc{i}],'Linewidth',1});hold on;
+%         plot(radProb.during.x.*currEmpSynth{i}.rBound,...
+%             radProb.during.y,'Color',cc{i},'Linewidth',1);hold on;
+
         radProbAllGen{i,g} = radProb;
     end
     
     subplot(6,4,k);
-    plot([border,border],[0 0.4],'r--');ylim([0 0.3])
+    p_border = plot([border,border],[0 0.4],'r--');ylim([0 0.3])
     xlabel('Position (cm)');ylabel('Probability');
     title({currEmpSynth{i}.id, ' Before'})
     
@@ -307,7 +310,7 @@ for g = 1:numel(f_orcoAll)
     title({currEmpSynth{i}.id, ' During'})
     
     if k==1
-        subplot(6,4,k);legend({'emp Head','synth'})
+        subplot(6,4,k);legend([p{1}.mainLine p{2}.mainLine p_border],{'emp Head','synth'})
     end
     
     k = k+2;

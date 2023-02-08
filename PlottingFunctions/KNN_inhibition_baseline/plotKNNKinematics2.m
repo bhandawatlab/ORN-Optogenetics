@@ -1,4 +1,5 @@
-function [fNum,stateFigure,kinFigure] = plotKNNKinematics2(f_orcoAll,state2Cons,tim2Cons,plotType,colortype,fNum)
+function [fNum,stateFigure,kinFigure] = plotKNNKinematics2...
+    (f_orcoAll,state2Cons,tim2Cons,plotType,colortype,fNum)
 
 % loop through each genotype
 k=ones(1,numel(state2Cons));

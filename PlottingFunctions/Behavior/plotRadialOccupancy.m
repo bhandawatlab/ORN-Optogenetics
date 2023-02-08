@@ -18,17 +18,21 @@ for gen = 1:numel(f_orcoAll)
             k = 1;fNum = fNum+1;
         end
         
-        subplot(6,4,k);
-        plot(radialProb.before.x.*f_orco.rBound,radialProb.before.y,'-g','Linewidth',1);hold on;
-        plot(radialProb.during.x.*f_orco.rBound,radialProb.during.y,'-r','Linewidth',1);
-        plot([border,border],[0 yl],'--k');hold off;
+        subplot(6,4,k); 
+        p_b = shadedErrorBar(radialProb.before.x.*f_orco.rBound,radialProb.before.weightedMu,...
+            radialProb.before.sem,'lineprops',{'-g','Linewidth',1});hold on;
+        p_d = shadedErrorBar(radialProb.during.x.*f_orco.rBound,radialProb.during.weightedMu,...
+            radialProb.during.sem,'lineprops',{'-r','Linewidth',1});
+%         plot(radialProb.before.x.*f_orco.rBound,radialProb.before.y,'-g','Linewidth',1);hold on;
+%         plot(radialProb.during.x.*f_orco.rBound,radialProb.during.y,'-r','Linewidth',1);
+        p_border = plot([border,border],[0 yl],'--k');hold off;
         text(0.05*f_orco.rBound,0.3,['n=' num2str(f_orco.nFly)])
         ylim([0 yl]);xlim([0 f_orco.rBound]);
         xlabel('radial pos (cm)');ylabel('Probability');
         xticks([0:0.25:1].*f_orco.rBound);yticks([0:0.1:yl]);
         
         if k==1
-            legend({'Before','During'})
+            legend([p_b.mainLine p_d.mainLine p_border],{'Before','During','border'})
         end
         
         title(f_orco.id);

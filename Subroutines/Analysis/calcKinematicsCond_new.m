@@ -65,20 +65,20 @@ for fly = 1:self.nFly
         [~,c] = max(percContr,[],2);
         
         %%%
-        badTracks_lastBaseline = false(numel(startNdxTmp),1);
-        for j = 1:numel(startNdxTmp)
-            if c(j) ==1 % not before first entry
-                F_hist = FSmooth_dt(fly,startNdxTmp(j)-offSet:startNdxTmp(j));
-                dF_hist = dFSmooth_dt(fly,startNdxTmp(j)-offSet:startNdxTmp(j));
-                badTracks_lastBaseline(j) = ...
-                    (any(abs(F_hist-self.spk(1))<0.01) || any(abs(dF_hist)<0.01));
-            end
-        end
-        
-        startNdxTmp(badTracks_lastBaseline) = [];
-        endNdxTmp(badTracks_lastBaseline) = [];
-        percContr(badTracks_lastBaseline,:) = [];
-        [~,c] = max(percContr,[],2);
+%         badTracks_lastBaseline = false(numel(startNdxTmp),1);
+%         for j = 1:numel(startNdxTmp)
+%             if c(j) ==1 % not before first entry
+%                 F_hist = FSmooth_dt(fly,startNdxTmp(j)-offSet:startNdxTmp(j));
+%                 dF_hist = dFSmooth_dt(fly,startNdxTmp(j)-offSet:startNdxTmp(j));
+%                 badTracks_lastBaseline(j) = ...
+%                     (any(abs(F_hist-self.spk(1))<0.01) || any(abs(dF_hist)<0.01));
+%             end
+%         end
+%         
+%         startNdxTmp(badTracks_lastBaseline) = [];
+%         endNdxTmp(badTracks_lastBaseline) = [];
+%         percContr(badTracks_lastBaseline,:) = [];
+%         [~,c] = max(percContr,[],2);
         %%%
         
         kk = ones(1,nStates.*nKey);

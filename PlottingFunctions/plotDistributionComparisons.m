@@ -35,16 +35,12 @@ for i = 1:numel(distTypes)
             subplot(3,3,k);
             tmp = cellfun(@(x) x(i,j),L_ratio(state,:));
             %histogram(tmp,3);
-            if k~= numel(state2Cons)
-                try
-                violinPlotsStats(tmp,[]);
-                catch
-                    a = 1;
-                end
+%             if k~= numel(state2Cons)
+                violinPlotsStats(reshape(tmp,[],1),[]);
                 %violinPlots(tmp,[],true,false);
-            else
-                violinPlots(tmp,[],true,true);
-            end
+%             else
+%                 violinPlots(tmp,[],true,true);
+%             end
             hold on;plot([-0.5 0.5],[0 0],'k');hold off
             title([m{state}.state.state ' ' m{state}.state.kin])
             k = k+1;

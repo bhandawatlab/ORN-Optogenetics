@@ -47,7 +47,7 @@ dSpk = synth_orco.calcDeltaFR;
 % baseline firing rate, baseline firing rate after FE, and above
 % baseline firing rate
 condNdx = zeros(size(spk));condNdx(spk>baseline) = 4;
-condNdx(spk<baseline) = 2;condNdx(abs((spk-baseline))<0.001 & dSpk==0) = 3;
+condNdx(spk<baseline) = 2;condNdx(abs((spk-baseline))<0.01 & dSpk<0.1) = 3;
 for j = 1:synth_orco.nFly
     condNdx(j,1:fe(j)-1) = 1;
 end

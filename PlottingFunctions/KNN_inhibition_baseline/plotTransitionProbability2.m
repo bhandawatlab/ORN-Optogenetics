@@ -17,31 +17,32 @@ for gen = 1:nGen
         for j = 1:nStateNew
             newState = f_orco.model.TP.key{j};
             m = f_orco.model.TP.during{i,j};
+            extrapolatedKNN_space = all(isnan(f_orco.model.TurnBias.duringRaw{j}),3)';
             mBaseline = f_orco.model.TP.before(i,j);
+            
+            % average across time
+            if mod(k,24) == 1
+                figure(fNum);set(gcf,'Position',[2 42 838 924])
+                currSupT = [f_orcoAll{gen}.id];
+                for g = 1:min(nGen-gen,2)
+                    currSupT = [currSupT '; ' f_orcoAll{gen+g}.id];
+                end
+                currSupT = [currSupT '; time from first entry'];
+                suptitle(currSupT)
+                k = 1;fNum = fNum+1;
+            end
+            
             if ~isempty(m)
                 ylims = [0 1];ztick = [0:0.5:1];
-
-                % average across time
-                if mod(k,24) == 1
-                    figure(fNum);set(gcf,'Position',[2 42 838 924])
-                    currSupT = [f_orcoAll{gen}.id];
-                    for g = 1:min(nGen-gen,2)
-                        currSupT = [currSupT '; ' f_orcoAll{gen+g}.id];
-                    end
-                    currSupT = [currSupT '; time from first entry'];
-                    suptitle(currSupT)
-                    k = 1;fNum = fNum+1;
-                end
-
                 subplot(6,4,k);
-                plotSubplot(XX, YY, m, mBaseline, ylims,ztick, colortype, plotType);
+                plotSubplot(XX, YY, m, mBaseline, extrapolatedKNN_space, ylims,ztick, colortype, plotType);
                 title([priorState ' to ' newState])
                 plotCB(mBaseline,ztick)
                 if mod(k,4)~=1
                     ylabel('')
                 end
-                k = k+1;
             end
+            k = k+1;
         end
     end
     k = ceil((k-1)/4)*4+1;
@@ -53,7 +54,7 @@ end
 
 end
 
-function [] = plotSubplot(XX, YY, m, mBaseline, ylims, ztick, colortype, plotType)
+function [] = plotSubplot(XX, YY, m, mBaseline, extrapolatedKNN_space, ylims, ztick, colortype, plotType)
 switch colortype
     case 'absolute'
         ylims(1) = ylims(1);
@@ -68,11 +69,15 @@ end
 
 switch plotType
     case 'imagesc'
-        imagesc(XX(1,:),YY(:,1)',m(XX,YY),[ylims(1) ylims(2)]);set(gca,'YDir','normal');
+        tmp = m(XX,YY);
+        tmp(extrapolatedKNN_space) = nan;
+        imagesc(XX(1,:),YY(:,1)',tmp,[ylims(1) ylims(2)]);set(gca,'YDir','normal');
         colormap([0 0 0;jet]);
         %plotCB(m,ztick)
     case 'surf'
-        surf(XX,YY,exp(m.val(:,:,tt)));view([45 45]);hold on;
+        tmp = exp(m.val(:,:,tt));
+        tmp(extrapolatedKNN_space) = nan;
+        surf(XX,YY,tmp);view([45 45]);hold on;
         points=[[min(XX(:)) min(XX(:)) max(XX(:)) max(XX(:))]' ...
             [0 max(YY(:)) max(YY(:)) 0]' mBaseline.*[1 1 1 1]'];
         h = fill3(points(:,1),points(:,2),points(:,3),'k');

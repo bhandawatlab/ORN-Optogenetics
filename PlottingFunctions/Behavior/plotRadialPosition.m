@@ -1,4 +1,4 @@
-function [N,xCent,yCent,distByTime,perAtBound,radialOccupancy,r,tt] = ...
+function [xCent,yCent,distByTime,perAtBound,radialOccupancy,r,tt] = ...
     plotRadialPosition(self,border,cond,plotFig,varargin)
 % default values
 dt = 2.*self.fs;
@@ -94,16 +94,18 @@ X = [tt(:),(r(:))];
 X(any(isnan(X),2),:) = [];
 
 % downsample to 200,000 data points
-% if size(X,1)>200000
-%     X = X(randsample(size(X,1),200000),:);
-% end
-N = ksdensity(X,xi);
-N = reshape(N,size(x1));
-if plotFig
-    if strcmpi(plotType,'imagesc')
+if size(X,1)>200000
+    X = X(randsample(size(X,1),200000),:);
+end
+if strcmpi(plotType,'imagesc')
+    N = ksdensity(X,xi);
+    N = reshape(N,size(x1));
+    if plotFig
         imagesc(xCent./self.fs, yCent./4,N,clims);colorbar
-    else
-        ksdensity([tt(:),(r(:))],xi);colorbar
+    end
+else
+    if plotFig
+        ksdensity(X,xi);colorbar
         colormap(jet)
         view(45,45);
         set(gca,'Xdir','normal','Ydir','reverse');
@@ -112,9 +114,9 @@ if plotFig
         xticks([0:60:180]); xticklabels(cellstr(num2str([0:60:180]')))
         yticks([0:2:4]); yticklabels(cellstr(num2str([0:2:4]')))
     end
-    xlabel('time')
-    ylabel('r')
-    shading interp
 end
+xlabel('time')
+ylabel('r')
+shading interp
 
 end

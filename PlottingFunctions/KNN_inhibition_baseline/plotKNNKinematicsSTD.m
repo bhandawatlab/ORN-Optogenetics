@@ -17,9 +17,10 @@ for gen = 1:nGen
         state = state2Cons(i);
         m = f_orco.model.params{state};
         
-        for slice = 1:numel(m.g2_std)
-            m.val(:,:,slice) = m.g2_std{slice}(XX,YY);
-        end
+        m.val = m.val2;
+%         for slice = 1:numel(m.g2_std)
+%             m.val(:,:,slice) = m.g2_std{slice}(XX,YY);
+%         end
         
         if strcmpi(m.state.kin,'spd')
             ylab = 'mm/s';ylims = [0.5 1.5];ztick = [0.5 1 1.5];

@@ -2,12 +2,13 @@ function [fNum] = plotTurnDensityRadialOccupencyCorr(radProbAllGen,turnDensAllGe
 
 posDiff = [];turnDiff = [];
 for g = 1:numel(genAll)
-    posDiff(g,:) = radProbAllGen{1,g}.during.y-radProbAllGen{2,g}.during.y;
+    posDiff(g,:) = radProbAllGen{1,g}.during.weightedMu-radProbAllGen{2,g}.during.weightedMu;
     turnDiff(g,:) = turnDensAllGen{1,g}.Dur-turnDensAllGen{2,g}.Dur;
 end
 
-[rhoCorr,~] = corr(posDiff',turnDiff');
+[rhoCorr,pval] = corr(posDiff',turnDiff');
 D = diag(rhoCorr);
+P = diag(pval);
 
 posDiffPosOnly = posDiff;
 posDiffPosOnly(posDiffPosOnly<0) = 0;
@@ -40,7 +41,7 @@ for g = 1:numel(genAll)
     h.LineWidth = 1;
     ylabel('radial loc diff');
     xlabel('Turn density diff');%xticks([0:0.5:4])
-    title([genAll{g} ' Rsq=' num2str(D(g).^2)])
+    title({[genAll{g} ], [' Rsq=' num2str(D(g).^2) ', p=' num2str(P(g))]})
 end
 fNum = fNum+1;
 
@@ -71,22 +72,22 @@ fNum = fNum+1;
 figure(fNum);set(gcf,'Position',[2 42 838 924])
 md1 = fitlm(sum(posDiffPosOnly,2),D);
 subplot(3,2,1);h = plot(md1);h(1).Marker = 'o';
-xlim([0.1 0.6]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary)])
+xlim([0.1 0.6]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
 xlabel('total positive pos diff');ylabel('Correlation')
 
 md1 = fitlm(sum(turnDiffPosOnly,2),D);
 subplot(3,2,2);h = plot(md1);h(1).Marker = 'o';
-xlim([0.1 0.35]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary)])
+xlim([0.1 0.35]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
 xlabel('total positive turn diff');ylabel('Correlation')
 
 md1 = fitlm(max(posDiffPosOnly,[],2),D);
 subplot(3,2,3);h = plot(md1);h(1).Marker = 'o';
-xlim([0 0.2]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary)])
+xlim([0 0.2]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
 xlabel('max positive pos diff');ylabel('Correlation')
 
 md1 = fitlm(max(turnDiffPosOnly,[],2),D);
 subplot(3,2,4);h = plot(md1);h(1).Marker = 'o';
-xlim([0 0.15]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary)])
+xlim([0 0.15]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
 xlabel('max positive turn diff');ylabel('Correlation')
 
 pd1 = fitdist(D,'kernel');

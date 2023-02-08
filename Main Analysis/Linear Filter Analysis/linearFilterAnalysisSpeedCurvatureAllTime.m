@@ -1,4 +1,4 @@
-function [b_spd,b_curv] = linearFilterAnalysisSpeedCurvatureAllTime(f_orco,border)
+function [b_spd,b_curv] = linearFilterAnalysisSpeedCurvatureAllTime(f_orco,meta)
 % linearFilterAnalysisSpeedCurvatureAllTime  wrapper function for calculating
 %   the linear filters for speed and curvature across the entire after
 %   first entry period for each fly separately
@@ -13,6 +13,10 @@ function [b_spd,b_curv] = linearFilterAnalysisSpeedCurvatureAllTime(f_orco,borde
 %           b_curv = same as b_spd, but for linear filters from firing rate
 %               to curvature.
 %   
+close all
+if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
+    mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+end
 
 close all
 % compute turn triggered averages
@@ -22,7 +26,7 @@ ntfilt = 2*f_orco.fs;
 figureFileCurv = 'Firing Rate to Curv Filter All Flies_2sFilter';
 figureFileSpd = 'Firing Rate to Speed Filter All Flies_2sFilter';
 
-fe = f_orco.getFirstEntry('H',border);
+fe = f_orco.getFirstEntry('H',meta.border);
 spd = f_orco.calcSpd;
 XStimAllFly = [];
 curvAllfly = [];
@@ -42,18 +46,20 @@ for fly = 1:f_orco.nFly
     
     yl = 'degrees/s';
     try
-        b_curv{fly} = generateLinearFilter_KinAllTime({f},curv,zeros(size(curv)),ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,f_orco.fs);
+        b_curv{fly} = generateLinearFilter_KinAllTime({f},curv,...
+            zeros(size(curv)),ntfilt,filter_type,yl,14,U,s,V,XStimNew,f_orco.fs);%delay
     catch
         figure;title(['Not enough data for fly ' num2str(fly)]);
     end
-    print('-painters','-dpsc2',[figureFileCurv '.ps'],'-loose','-append');
+    print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFileCurv '.ps'],'-loose','-append');
     yl = 'mm/s';
     try
-        b_spd{fly} = generateLinearFilter_KinAllTime({f},currSpd,zeros(size(currSpd)),ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,f_orco.fs);
+        b_spd{fly} = generateLinearFilter_KinAllTime({f},currSpd,...
+            zeros(size(currSpd)),ntfilt,filter_type,yl,14,U,s,V,XStimNew,f_orco.fs);%delay
     catch
         figure;title(['Not enough data for fly ' num2str(fly)]);
     end
-    print('-painters','-dpsc2',[figureFileSpd '.ps'],'-loose','-append');
+    print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFileSpd '.ps'],'-loose','-append');
     
     XStimAllFly = [XStimAllFly;XStimNew];
     curvAllfly = [curvAllfly;curv];
@@ -61,11 +67,16 @@ for fly = 1:f_orco.nFly
     fAllfly = [fAllfly,f];
 end
 
-ps2pdf('psfile', [figureFile '.ps'], 'pdffile', ...
-[figureFile '.pdf'], 'gspapersize', 'letter',...
-'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
-'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
-'gslibpath','C:\Program Files\gs\gs9.50\lib');
+ps2pdf('psfile',[meta.plotFold 'LinearFilterAnalysis/' figureFileCurv '.ps'], 'pdffile', ...
+    [meta.plotFold 'LinearFilterAnalysis/' figureFileCurv '.pdf'], 'gspapersize', 'letter',...
+    'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
+    'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
+    'gslibpath','C:\Program Files\gs\gs9.50\lib');
+ps2pdf('psfile',[meta.plotFold 'LinearFilterAnalysis/' figureFileSpd '.ps'], 'pdffile', ...
+    [meta.plotFold 'LinearFilterAnalysis/' figureFileSpd '.pdf'], 'gspapersize', 'letter',...
+    'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
+    'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
+    'gslibpath','C:\Program Files\gs\gs9.50\lib');
 
 end
 

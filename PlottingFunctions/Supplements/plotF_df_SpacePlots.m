@@ -1,4 +1,4 @@
-function [fNum] = plotF_df_SpacePlots(f_orcoAll,fNum,border,Intensity2VoltageFile)
+function [fNum] = plotF_df_SpacePlots(f_orcoAll,fNum,border)
 alldSpk = [];allSpk = [];allRPos = [];
 alldSpkSmooth = [];allSpkSmooth = [];
 dF_thresh = 20;F_thresh = 15;
@@ -39,6 +39,9 @@ for g = 1:numel(f_orcoAll)
 
             tt = (1:1:numel(ndx))./f_orco.fs;
             nearestInt = round2NearestInterval(tt(end),1);
+            
+            I = location2Intensity(f_orco.rH(fly,ndx)',f_orco.model.IntensitySpace.x,...
+                f_orco.model.IntensitySpace.I,f_orco.model.IntensitySpace.convIV);
 
             %plot(dSpk(fly,ndx), f_orco.spk(fly,ndx));
             %plot3(dSpk(fly,ndx), f_orco.spk(fly,ndx),(1:1:numel(ndx))./f_orco.fs);
@@ -60,8 +63,10 @@ for g = 1:numel(f_orcoAll)
             subplot(3,2,idx+4);yyaxis left;plot(tt,f_orco.spk(fly,ndx),'LineWidth',2);hold on;
             plot(tt,FSmooth(fly,ndx),'Color',[0.5 0.5 0.5],'LineWidth',2)
             xlim([0 nearestInt]);ylim([0 45]);ylabel('spike rate')
-            yyaxis right;plot(tt,f_orco.rH(fly,ndx),'LineWidth',2)
-            xlim([0 nearestInt]);ylim([0 4]);ylabel('radial position')
+            yyaxis right;plot(tt,I,'LineWidth',2)
+            xlim([0 nearestInt]);ylim([0 4]);ylabel('Intensity (mW/cm2)')
+            %yyaxis right;plot(tt,f_orco.rH(fly,ndx),'LineWidth',2)
+            %xlim([0 nearestInt]);ylim([0 4]);ylabel('radial position')
             xlabel('time');
         end
         suptitle(['Sample Trajectory in F/dF space: ' gen])

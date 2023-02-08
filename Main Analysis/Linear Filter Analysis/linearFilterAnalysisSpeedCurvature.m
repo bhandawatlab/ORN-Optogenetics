@@ -1,4 +1,5 @@
-function [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = linearFilterAnalysisSpeedCurvature(f_orco,plotFigure)
+function [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = ...
+    linearFilterAnalysisSpeedCurvature(f_orco,meta,plotFigure)
 % linearFilterAnalysisSpeedCurvature  wrapper function for calculating the
 %   linear filters for speed and curvature at crossing (defined by delta
 %   firing rate)
@@ -11,6 +12,10 @@ function [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = linearFilterAnalysisS
 %           b_spdEnter = linear filters for speed when entering.
 %           b_curvEnter = linear filters for curvature when entering.
 %   
+close all
+if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
+    mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+end
 
 fs = 100;
 close all
@@ -23,10 +28,10 @@ thresh = 15;
 yl = 'mm/s';
 [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,spd_leaving,...
     spd_entering,spd_leaving_std,spd_entering_std] = ...
-    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'spd',false);
+    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'spd',false,plotFigure);
 yl = 'degrees/s';
 [~,~,~,~,curv_leaving,curv_entering,curv_leaving_std,curv_entering_std] = ...
-    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'curv',false);
+    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'curv',false,plotFigure);
 
 delay = 4*fs;
 curv_leaving = resample(curv_leaving,fs,f_orco.fs);
@@ -64,15 +69,18 @@ stim_all = {f_leaving_all};filter_type = {'firing rate filter'};
 currKin = spd_leaving(delay+1:end)';
 currKin_std = spd_leaving_std(delay+1:end);
 yl = 'mm/s';
-b_spdLeave = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs);
-sgtitle('Speed Leaving')
-
+b_spdLeave = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+if plotFigure
+    sgtitle('Speed Leaving')
+end
 
 currKin = curv_leaving(delay+1:end)';
 currKin_std = curv_leaving_std(delay+1:end);
 yl = 'deg/s';
-b_curvLeave = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs);
-sgtitle('Curvature Leaving')
+b_curvLeave = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+if plotFigure
+    sgtitle('Curvature Leaving')
+end
 
 % firing rate filter entering
 stim_all = {f_entering_all};filter_type = {'firing rate filter'};
@@ -81,15 +89,18 @@ stim_all = {f_entering_all};filter_type = {'firing rate filter'};
 currKin = spd_entering(delay+1:end)';
 currKin_std = spd_entering_std(delay+1:end)';
 yl = 'mm/s';
-b_spdEnter = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs);
-sgtitle('Speed Entering')
+b_spdEnter = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+if plotFigure
+    sgtitle('Speed Entering')
+end
 
 currKin = curv_entering(delay+1:end)';
 currKin_std = curv_entering_std(delay+1:end)';
 yl = 'deg/s';
-b_curvEnter = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs);
-sgtitle('Curvature Entering')
-
+b_curvEnter = generateLinearFilter_KinTurnProb(stim_all,currKin,currKin_std,ntfilt,filter_type,delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+if plotFigure
+    sgtitle('Curvature Entering')
+end
 
 % %% individual flies
 % thresh = 15;
@@ -151,10 +162,10 @@ sgtitle('Curvature Entering')
 if plotFigure
     for f = 1:get(gcf,'Number')
         figure(f);
-        print('-painters','-dpsc2',[figureFile '.ps'],'-loose','-append');
+        print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFile '.ps'],'-loose','-append');
     end
-    ps2pdf('psfile', [figureFile '.ps'], 'pdffile', ...
-    [figureFile '.pdf'], 'gspapersize', 'letter',...
+    ps2pdf('psfile', [meta.plotFold 'LinearFilterAnalysis/' figureFile '.ps'], 'pdffile', ...
+    [meta.plotFold 'LinearFilterAnalysis/' figureFile '.pdf'], 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');

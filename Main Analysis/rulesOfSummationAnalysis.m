@@ -5,6 +5,10 @@ tic;
 t1 = -20;
 t2 = 20;
 t3 = 15;
+plotFolder = [meta.plotFold  'SummationAnalysis\'];
+if ~exist(plotFolder, 'dir')
+    mkdir(plotFolder)
+end
 
 %%
 % precompute bounds
@@ -107,7 +111,7 @@ end
 
 %plot posterior
 close all
-plotPosterior(allMat);
+plotPosterior(allMat,plotFolder);
 
 % plot synergy
 close all
@@ -127,33 +131,33 @@ fNum = plotSynergisticByNumberOfORN(f_orco,stateKinBaseline,stateKinAll,...
 % states2Cons = [1,2,3,4];
 % newOrder = [2,3,1,4,5];
 % plotLooseRigid(allMat,states2Cons,newOrder,fNum);
-% printFigures('Figures/ORN optogenetics_Synergy_Cov')
+% printFigures([plotFolder 'ORN optogenetics_Synergy_Cov'])
 % 
 % close all
 % plotSyn = true;
 % type = 'full';
 % plotSynergyPosteriorByROI(allMat,type,plotSyn);
-% printFigures('Figures/ORN optogenetics_SynergyPosteriorByROI_full')
+% printFigures([plotFolder 'ORN optogenetics_SynergyPosteriorByROI_full'])
 % 
 % close all
 % plotSyn = true;
 % type = 'alpha';
 % plotSynergyPosteriorByROI(allMat,type,plotSyn);
-% printFigures('Figures/ORN optogenetics_SynergyPosteriorByROI_alpha')
+% printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_alpha'])
 % 
 % 
 % close all
 % type = 'absolute';%relative
 % threshold = [0.5,0.5,1,0.5];
 % plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
-% printFigures('Figures/ORN optogenetics_SynergyPosteriorByROI_realSpace_relative3')
+% printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative3'])
 
 close all
 type = 'relative';%absolute
 %threshold = [0.15,0.15,0.15,0.15];
 threshold = [0.1,0.1,0.1,0.1];
 plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
-printFigures('Figures/ORN optogenetics_SynergyPosteriorByROI_realSpace_relative3')
+printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative'])
 
 end
 
@@ -497,7 +501,7 @@ for i = 1:numel(allMat)
 end
 end
 
-function [] = plotPosterior(allMat)
+function [] = plotPosterior(allMat,plotFolder)
 for i = 1:numel(allMat)
     close all
     load(allMat{i})
@@ -513,7 +517,7 @@ for i = 1:numel(allMat)
     C = strsplit(allMat{i},{'.','\'});
     fName = [C{end-1} '_Posterior'];
     %fName = [allMat{i}(1:end-4) '_Posterior'];
-    printFigures(['Figures/' fName]);
+    printFigures([plotFolder fName]);
 end
 end
 
@@ -876,7 +880,7 @@ function [stateKinAll,stateKinBaseline,stateKinBaselineMu,stateKinBaselineVar,..
 for i = 1 :numel(genAll)%2%
     gen = genAll{i};
     
-    load(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');
+    load([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');
     baseline = f_orco.spk(1);
     
     XX = f_orco.model.TurnBias.XX;

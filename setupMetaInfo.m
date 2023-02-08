@@ -22,19 +22,22 @@ meta.d = 'March2022';
 
 % set folders and supporting files
 meta.foldRaw = [pwd '\Data\DataRaw'];
-meta.foldStim = [pwd '\Data\DataStim'];
 meta.folderData = [pwd '\Data\DataGen'];
+meta.foldStim = [pwd '\Data\DataStim'];
 meta.foldSpk = [pwd '\Data\DataSpike'];
+meta.folderObject = [pwd '\Data\DataModel'];
 meta.LFPFilterFile = [pwd '\Data\LFP_2_25.mat'];
 meta.RateFilterFile = [pwd '\Data\LFP2Rate_4_12.mat'];
 meta.Intensity2VoltageFile = [pwd '\Data\Intensity_space2.mat'];
 meta.spikingDataFile = [pwd '\Data\empdataNew.mat'];
 meta.trainingDataFolder = [pwd '\Data\Training Data\'];
 meta.syntheticFlyFold = [pwd '\DataRT\'];
-meta.syntheticPlotFold = [pwd '\Figures\EmpSynth\'];
 meta.summationModelFold = [pwd '\Data\SummationModel\'];
 meta.calibrationFolder = [pwd '\Data\Calibration'];
 meta.calibrationFile = '\LIR_exp_1.xlsx';
+
+meta.plotFold = [pwd '\Figures\'];
+meta.syntheticPlotFold = [meta.plotFold '\EmpSynth\'];
 
 % create any folder that does not exist
 createFolders(meta);
@@ -58,11 +61,9 @@ meta.plotSupplements = plotSupplements;%false
 meta.timeInterval = [0 200];% in ms
 % time since first entry slices shown in the paper
 if adaptation == true
-    meta.tSlice = [0:15:115];
-    meta.tSlice2 = [0:30:180]; 
+    meta.tSlice = [0:15:115];meta.tSlice2 = [0:30:180]; 
 else
-    meta.tSlice = 0;
-    meta.tSlice2 = 0;
+    meta.tSlice = 0;meta.tSlice2 = 0;
 end
 meta.States2Plot_Inh = 1:4;% sharp turn and curved walk speed/curvature
 meta.States2Plot_KNN = 1:8;% sharp turn, curved walk, and stop parameters
@@ -75,7 +76,7 @@ if adaptation == true
     meta.zGrid = [0:5:180].*meta.fs;
     meta.ratio = [30, 10, 20.*meta.fs];
     meta.ext = '';
-    meta.foldName = 'Habituation/';
+    meta.foldName = 'Adaptation/';
     %----------------------------------------------------------------------
 else
     % no time since first entry
@@ -96,13 +97,14 @@ end
 function [] = createFolders(meta)
 % set up what folders to create
 fold{1} = meta.foldRaw;
-fold{2} = meta.foldStim;
-fold{3} = meta.folderData;
+fold{2} = meta.folderData;
+fold{3} = meta.foldStim;
 fold{4} = meta.foldSpk;
-fold{5} = meta.trainingDataFolder;
-fold{6} = meta.syntheticFlyFold;
-fold{7} = meta.syntheticPlotFold;
-fold{8} = meta.summationModelFold;
+fold{5} = meta.folderObject;
+fold{6} = meta.trainingDataFolder;
+fold{7} = meta.syntheticFlyFold;
+fold{8} = meta.syntheticPlotFold;
+fold{9} = meta.summationModelFold;
 
 % create the necessary folder to house the data
 for i = 1:numel(fold)

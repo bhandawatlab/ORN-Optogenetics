@@ -17,9 +17,6 @@ for fly = 1:8
     [startNdx_stop,endNdx_stop,type] = startEndSeq(f_orco.states.ndx(fly,tt)==stopNdx);
     startNdx_stop(type==0) = [];
     endNdx_stop(type==0) = [];
-    for i = 1:numel(startNdx_stop)
-        plot(currX(startNdx_stop(i):endNdx_stop(i)),currY(startNdx_stop(i):endNdx_stop(i)),'g','LineWidth',2);
-    end
     
     % index the x,y body and head position, firing rate, and curvature for
     % the period of time defined by tt
@@ -30,13 +27,16 @@ for fly = 1:8
     currF = f_orco.spk(fly,tt);
     curv = f_orco.curv(fly,tt).*180./pi.*f_orco.fs;
     
-    % plot the x,y path trajecotry
     figure;set(gcf,'Position',[2 42 838 924]);
-    subplot(4,1,[1 2]);
-    plot3(currX,currY,-tt./f_orco.fs,'k','LineWidth',1);view(2);hold on;
+    subplot(4,1,[1 2]);hold on;
+    % plot the body vectors
     for i = 1:numel(currY)
         plot([currX(i) currXH(i)],[currY(i) currYH(i)],'color',[0.5 0.5 0.5]);
     end
+    % plot the x,y path trajectory
+    %plot3(currX,currY,-tt./f_orco.fs,'k','LineWidth',1);view(2);hold on;
+    plot(currX,currY,'k','LineWidth',1);
+    % plot the sharp turn instances
     for i = 1:numel(startNdx_ST)
         plot(currX(startNdx_ST(i):endNdx_ST(i)),currY(startNdx_ST(i):endNdx_ST(i)),'r','LineWidth',2);
     end
@@ -44,6 +44,11 @@ for fly = 1:8
     plotCircle([0 0],1.25,100,'c');
     plotCircle([0 0],4,100,'k');
     axis equal;
+    
+    % plot the stop instances
+    for i = 1:numel(startNdx_stop)
+        plot(currX(startNdx_stop(i):endNdx_stop(i)),currY(startNdx_stop(i):endNdx_stop(i)),'g','LineWidth',2);
+    end
     
     % plot the curvature of the trajectory
     subplot(4,1,3);

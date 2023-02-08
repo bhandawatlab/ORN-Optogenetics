@@ -13,6 +13,10 @@ function [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transi
 %   Output: b_leave = n x m linear filters for turn prob when leaving
 %           b_enter = linear filters for turn prob when entering
 %   
+close all
+if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
+    mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+end
 
 meta.delay = 15*30;
 meta.buffer = 1*30;
@@ -36,10 +40,12 @@ end
 thresh = 15;
 [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,turnProb_leaving,...
     turnProb_entering,turnProb_leaving_std,turnProb_entering_std] = ...
-    getDf_aligned_turnRates(f_orco,thresh,meta.delay+meta.buffer,turnNdxAbs,transitionsOnly,yl,f_orco.fs);
-for i = 1:6
-    subplot(3,2,i);
-    xlim([-15 15])
+    getDf_aligned_turnRates(f_orco,thresh,meta.delay+meta.buffer,turnNdxAbs,transitionsOnly,yl,f_orco.fs,plotFigure);
+if plotFigure
+    for i = 1:6
+        subplot(3,2,i);
+        xlim([-15 15])
+    end
 end
 fs = 100;
 turnProb_leaving = resample(turnProb_leaving,fs,f_orco.fs);
@@ -91,8 +97,10 @@ nthist = 2*fs;
 % firing rate filter
 stim_all = {f_leaving_all};filter_type = {'firing rate filter'};
 [U,s,V,XStimNew] = getSVD(stim_all,ntfilt,nthist,meta.delay);
-b_leave = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,meta.delay,yl,14,U,s,V,XStimNew,fs);
-sgtitle('Leaving')
+b_leave = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,meta.delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+if plotFigure
+    sgtitle('Leaving')
+end
 
 % entering
 turnProb = turnProb_entering(meta.delay+1:end)';
@@ -103,16 +111,18 @@ nthist = 2*fs;
 % firing rate filter
 stim_all = {f_entering_all};filter_type = {'firing rate filter'};
 [U,s,V,XStimNew] = getSVD(stim_all,ntfilt,nthist,meta.delay);
-b_enter = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,meta.delay,yl,14,U,s,V,XStimNew,fs);
-sgtitle('Entering')
+b_enter = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,meta.delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+if plotFigure
+    sgtitle('Entering')
+end
 
 if plotFigure
     for f = 1:get(gcf,'Number')
         figure(f);
-        print('-painters','-dpsc2',[figureFile '.ps'],'-loose','-append');
+        print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFile '.ps'],'-loose','-append');
     end
-    ps2pdf('psfile', [figureFile '.ps'], 'pdffile', ...
-    [figureFile '.pdf'], 'gspapersize', 'letter',...
+    ps2pdf('psfile', [meta.plotFold 'LinearFilterAnalysis/' figureFile '.ps'], 'pdffile', ...
+    [meta.plotFold 'LinearFilterAnalysis/' figureFile '.pdf'], 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');
@@ -250,7 +260,9 @@ if plotFigure
     plot([-meta.delay 0]./30,meandFR_during.*[1 1],'-k','LineWidth',2);
     plot([-meta.delay 0]./30,meandFR_during_noBaseline.*[1 1],'--k','LineWidth',2);
     xlabel('meta.delay (s)');ylabel('delta firing rate (spikes/s^2)');
-    print('-painters','-dpdf','STA_sharpTurnAnalysis.pdf');
+    
+    
+    print('-painters','-dpdf',[meta.plotFold 'LinearFilterAnalysis/STA_sharpTurnAnalysis.pdf']);
 end
 end
 

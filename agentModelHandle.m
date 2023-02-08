@@ -15,7 +15,7 @@ for g = 1:numel(genAll)
             
             try
                 if generateFlies
-                    load(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');
+                    load([meta.folderObject '/' gen '_' meta.d meta.ext '.mat'],'f_orco');
                     
                     % load information for calculating spike rate
                     LLFfs = 100; % linear filters for Intensity to ORN was calculated at 100 Hz

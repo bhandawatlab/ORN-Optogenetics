@@ -1,4 +1,4 @@
-function [f_orco] = getLeavingBoundaryParam(f_orco,fe)
+function [f_orco] = getLeavingBoundaryParam(f_orco,fe,plotFig)
 % getLeavingBoundaryParam  calculates the speed, curvature, and angle at
 %   which flies leave the physical arena boundary
 %
@@ -166,6 +166,10 @@ f_orco.model.boundary.leaving.spd = pd{2};
 f_orco.model.boundary.leaving.dur = pd{3};
 f_orco.model.boundary.leaving.angle = pd{4};
 f_orco.model.boundary.leaving.corrNdx = corrNdx;
+
+if ~plotFig
+    close all
+end
 %save(['DataModel/' gen '_' meta.d meta.ext '.mat'],'f_orco');
 %save('C:\Users\lt532\Desktop\ORN Optogenetics All Code\ORN-Optogenetics-mainFinalJune2022\DataModel\Orco Retinal_April2022_allTime.mat','f_orco')
 %save('C:\Users\lt532\Desktop\ORN Optogenetics All Code\ORN-Optogenetics-mainFinalJune2022\DataModel\Max Attraction Retinal_April2022_allTime.mat', 'f_orco')

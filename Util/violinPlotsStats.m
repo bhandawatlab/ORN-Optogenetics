@@ -100,6 +100,7 @@ for c = 1:nCond
     currData(outliers(:,c)) = nan;
     [f,~] = ksdensity(currData,data(:,c));
     [f_dens(c,:),x_dens(c,:)] = ksdensity(currData,linspace(opts.yl(1),opts.yl(2),200));
+    f_dens(c,:)=  f_dens(c,:)./sum(f_dens(c,:));
     %[f,~] = ksdensity(data(:,c),data(:,c),'Support','positive');
     %[f_dens,x_dens] = ksdensity(data(:,c),linspace(yl(1),yl(2),200),'Support','positive');
     m_f = max(f_dens(c,:));

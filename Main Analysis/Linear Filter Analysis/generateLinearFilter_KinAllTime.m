@@ -1,4 +1,5 @@
-function [b] = generateLinearFilter_KinAllTime(stim_all,kin,kin_std,ntfilt,filter_type,yl,optFitN,U,s,V,XStimNew,fs)
+function [b] = generateLinearFilter_KinAllTime(stim_all,kin,kin_std,...
+    ntfilt,filter_type,yl,optFitN,U,s,V,XStimNew,fs)
 % generateLinearFilter_KinAllTime  calculates the linear filter from firing
 %   rate to kinematics
 %
@@ -43,6 +44,7 @@ for fitN = 1:numel(optFitN_all)
     plot((1:numel(kin))./fs,turnProb_fit,'-g','LineWidth',2);
     plot((1:numel(kin))./fs,kin+kin_std,'--k','LineWidth',1);
     plot((1:numel(kin))./fs,kin-kin_std,'--k','LineWidth',1);
+    xlim([0 round2NearestInterval(numel(kin)./fs,1)])
     ylabel(yl);
     xlabel('delay (s)');
     title(['err = ' num2str(rho(optFitN_all(fitN)))])

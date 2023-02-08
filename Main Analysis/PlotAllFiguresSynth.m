@@ -1,4 +1,4 @@
-function PlotAllFiguresSynth(genAll,meta,currDur,currDelay)
+function PlotAllFiguresSynth(genAll,meta,currDelay,currDur)
 
 cond = ['_CWdur' strrep(num2str(currDur),'.','') ...
                 '_CWdelay' strrep(num2str(currDelay),'.','')];
