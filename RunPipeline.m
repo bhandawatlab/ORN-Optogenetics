@@ -49,21 +49,6 @@ GenerateEmpiricalFlies(genAll,meta);
 %% plot all figures
 PlotAllFiguresEmp(genAll,gen_Retinal,meta)
 
-%% ORN to speed/curv linear filter analysis
-gen = gen_Retinal{1};%'Orco Retinal'
-load([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
-transitionOnly = true;
-plotFigure = true;
-[~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
-transitionOnly = false;
-[~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
-% kinematics linear filters when entering and leaving the light border
-[~,~,~,~] = linearFilterAnalysisSpeedCurvature(f_orco,meta,plotFigure);
-linearFilterAnalysisSpeedCurvatureAllTime(f_orco,meta);
-
-%% plot rules of summation analysis
-rulesOfSummationAnalysis(gen_Retinal,meta)
-
 %% generate synthetic flies
 agentModelMeta.delay = 0;% time since peak of filter
 agentModelMeta.dur = [0];% duration of crossing filters%2
