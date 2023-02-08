@@ -1,7 +1,7 @@
-function PlotAllFiguresSynth(genAll,meta,Tau,C)
+function PlotAllFiguresSynth(genAll,meta,currDur,currDelay)
 
-cond = ['_CWTau' strrep(num2str(Tau),'.','') ...
-            '_CWC' strrep(num2str(C),'.','')];
+cond = ['_CWdur' strrep(num2str(currDur),'.','') ...
+                '_CWdelay' strrep(num2str(currDelay),'.','')];
 
 plotFolder = [meta.syntheticPlotFold];
 %%

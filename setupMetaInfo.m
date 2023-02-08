@@ -58,9 +58,11 @@ meta.plotSupplements = plotSupplements;%false
 meta.timeInterval = [0 200];% in ms
 % time since first entry slices shown in the paper
 if adaptation == true
-    meta.tSlice = [0:15:115];meta.tSlice2 = [0:30:180]; 
+    meta.tSlice = [0:15:115];
+    meta.tSlice2 = [0:30:180]; 
 else
-    meta.tSlice = 0;meta.tSlice2 = 0;
+    meta.tSlice = 0;
+    meta.tSlice2 = 0;
 end
 meta.States2Plot_Inh = 1:4;% sharp turn and curved walk speed/curvature
 meta.States2Plot_KNN = 1:8;% sharp turn, curved walk, and stop parameters

@@ -30,7 +30,7 @@ nPt = 200;
 
 if ~isfield(opts,'yl') || isempty(opts.yl)
     yl = [min(data(:)) max(data(:))];
-    opts.yl = yl+diff(yl).*[-0.1 0.1];
+    opts.yl = yl+(diff(yl)+1).*[-0.1 0.1];
 end
 if ~isfield(opts,'sigLevel') || isempty(opts.sigLevel)
     opts.sigLevel = [0.05,0.01,0.001];

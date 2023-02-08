@@ -36,7 +36,11 @@ for i = 1:numel(distTypes)
             tmp = cellfun(@(x) x(i,j),L_ratio(state,:));
             %histogram(tmp,3);
             if k~= numel(state2Cons)
+                try
                 violinPlotsStats(tmp,[]);
+                catch
+                    a = 1;
+                end
                 %violinPlots(tmp,[],true,false);
             else
                 violinPlots(tmp,[],true,true);

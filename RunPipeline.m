@@ -7,14 +7,18 @@ plotSupplements = false;
 %meta.saveData = false;
 
 % set genotypes
-gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
-    'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal',...
-    'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
-    'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal','Ir64a Ir75a Or42b New Retinal'};
-gen_Control = {'Orco Control','Ir8a Control','Orco Ir8a Control',...
-    'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control',...
-    'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
-    'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control','Ir64a Ir75a Or42b Control'};
+gen_Retinal = {'Or7a Retinal'}; 
+
+%'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
+%    'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal',...
+%    'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
+%    'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal','Ir64a Ir75a Or42b New Retinal'};
+gen_Control = {'Or7a Control'}; 
+    
+%'Orco Control','Ir8a Control','Orco Ir8a Control',...
+%    'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control',...
+%     'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
+%     'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control','Ir64a Ir75a Or42b Control'};
 genAll = reshape([gen_Retinal;gen_Control],[],1);
 
 %% generate consolidated data file from individual tracked data files
@@ -52,22 +56,22 @@ PlotAllFiguresEmp(genAll,gen_Retinal,meta)
 %% generate synthetic flies
 agentModelMeta.delay = 0;% time since peak of filter
 agentModelMeta.dur = (0:1:4);% duration of crossing filters
-if meta.adaptation == true
+% if meta.adaptation == true
+%     agentModelHandle(gen_Retinal,meta,agentModelMeta,true)
+% else
     agentModelHandle(gen_Retinal,meta,agentModelMeta,true)
-else
-    agentModelHandle(gen_Retinal,meta,agentModelMeta,true)
-end
+% end
 
 %% plot empirical synthetic comparisons
-PlotAllFiguresSynth(gen_Retinal,meta,agentModelMeta.tau,agentModelMeta.C);
+PlotAllFiguresSynth(gen_Retinal,meta,agentModelMeta.delay,agentModelMeta.dur(1));
 
 %% plot rules of summation analysis
-rulesOfSummationAnalysis(gen_Retinal,meta)
+%rulesOfSummationAnalysis(gen_Retinal,meta)
 
 %% svd analysis
-load('DataModel\Orco Retinal_April2022_allTime.mat', 'f_orco')
-figureFile = 'StateSpaceEmbeddingDimensionsFNN_200msDelay';
-SVD_embeddingAnalysis(f_orco,meta,figureFile);
+% load('DataModel\Or7a Retinal_March2022_allTime.mat', 'f_orco')
+% figureFile = 'StateSpaceEmbeddingDimensionsFNN_200msDelay';
+% SVD_embeddingAnalysis(f_orco,meta,figureFile);
 
 
 

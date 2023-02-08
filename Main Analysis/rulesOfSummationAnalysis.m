@@ -7,94 +7,94 @@ t2 = 20;
 t3 = 15;
 
 %%
-% % precompute bounds
-% [stateKinAll,stateKinBaseline,stateKinBaselineMu,stateKinBaselineVar,...
-%     StateLabel,f_orco] = getKinematicsByRegions(genAll,meta,t1,t2,t3,false);
-% RegionLabel = {'NegDF','PosDF','HighF','Inh','LowF'};
-% 
-% %% Orco Ir8a
-% lab = [{'Orco','Ir8a','OrcoIr8a','Orco','Ir8a'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Orco'};
-%     {'Ir8a'}];
-% Gen2Cons = [1:3];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-% save([meta.summationModelFold 'OrcoIr8aCombination.mat'])
-% fprintf('Orco+Ir8a done in %d seconds.\n',round(toc));
-% 
-% %% Or42b Or92a
-% lab = [{'Or42b','Or92a','Or42bOr92a','Or42b','Or92a'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Or42b'};
-%     {'Or92a'}];
-% Gen2Cons = [5,6,9];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-% save([meta.summationModelFold 'Or42bOr92aCombination.mat'])
-% fprintf('Or42b+Or92a done in %d seconds.\n',round(toc));
-% 
-% %% Ir64a Ir75a
-% lab = [{'Ir64a','Ir75a','Ir64aIr75a','Ir64a','Ir75a'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Ir64a'};
-%     {'Ir75a'}];
-% Gen2Cons = [7,8,10];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-% save([meta.summationModelFold 'Ir64aIr75aCombination.mat'])
-% fprintf('Ir64a+Ir75a done in %d seconds.\n',round(toc));
-% 
-% %% Or42b Ir64a
-% lab = [{'Or42b','Ir64a','Or42bIr64a','Or42b','Ir64a'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Or42b'};
-%     {'Ir64a'}];
-% Gen2Cons = [5,7,11];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-% save([meta.summationModelFold 'Or42bIr64aCombination.mat'])
-% fprintf('Or42b+Ir64a done in %d seconds.\n',round(toc));
-% 
-% %% Ir64aIr75a Or42b
-% lab = [{'Or42b','Ir64aIr75a','Ir64aIr75aOr42b','Or42b','Ir64aIr75a'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Or42b'};
-%     {'Ir64aIr75a'}];
-% Gen2Cons = [5,10,12];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-% save([meta.summationModelFold 'Ir64aIr75aOr42bCombination.mat'])
-% fprintf('Or42b+Ir64aIr75a done in %d seconds.\n',round(toc));
-% 
-% %% Ir64aIr75a Ir75a
-% lab = [{'Ir75a','Ir64aOr42b','Ir64aIr75aOr42b','Ir75a','Ir64aOr42b'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Ir75a'};
-%     {'Ir64aOr42b'}];
-% Gen2Cons = [8,11,12];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,20,false);
-% save([meta.summationModelFold 'Ir64aIr75aOr42bCombination2.mat'])
-% fprintf('Ir64aOr42b+Ir75a done in %d seconds.\n',round(toc));
-% 
-% %% Or42a Or42b Or92a
-% lab = [{'Or42a','Or42bOr92a','Or42aOr42bOr92a','Or42a','Or42bOr92a'};
-%  {'Before','Before','Before','',''}];
-% 
-% labCov = [{'Or42a'};
-%     {'Or42bOr92a'}];
-% Gen2Cons = [4,9,13];tic;
-% [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-%     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-% save([meta.summationModelFold 'Or42aOr42bOr92aCombination.mat'])
-% fprintf('Or42a+Or42bOr92a done in %d seconds.\n',round(toc));
+% precompute bounds
+[stateKinAll,stateKinBaseline,stateKinBaselineMu,stateKinBaselineVar,...
+    StateLabel,f_orco] = getKinematicsByRegions(genAll,meta,t1,t2,t3,false);
+RegionLabel = {'NegDF','PosDF','HighF','Inh','LowF'};
+
+%% Orco Ir8a
+lab = [{'Orco','Ir8a','OrcoIr8a','Orco','Ir8a'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Orco'};
+    {'Ir8a'}];
+Gen2Cons = [1:3];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+save([meta.summationModelFold 'OrcoIr8aCombination.mat'])
+fprintf('Orco+Ir8a done in %d seconds.\n',round(toc));
+
+%% Or42b Or92a
+lab = [{'Or42b','Or92a','Or42bOr92a','Or42b','Or92a'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Or42b'};
+    {'Or92a'}];
+Gen2Cons = [5,6,9];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+save([meta.summationModelFold 'Or42bOr92aCombination.mat'])
+fprintf('Or42b+Or92a done in %d seconds.\n',round(toc));
+
+%% Ir64a Ir75a
+lab = [{'Ir64a','Ir75a','Ir64aIr75a','Ir64a','Ir75a'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Ir64a'};
+    {'Ir75a'}];
+Gen2Cons = [7,8,10];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+save([meta.summationModelFold 'Ir64aIr75aCombination.mat'])
+fprintf('Ir64a+Ir75a done in %d seconds.\n',round(toc));
+
+%% Or42b Ir64a
+lab = [{'Or42b','Ir64a','Or42bIr64a','Or42b','Ir64a'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Or42b'};
+    {'Ir64a'}];
+Gen2Cons = [5,7,11];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+save([meta.summationModelFold 'Or42bIr64aCombination.mat'])
+fprintf('Or42b+Ir64a done in %d seconds.\n',round(toc));
+
+%% Ir64aIr75a Or42b
+lab = [{'Or42b','Ir64aIr75a','Ir64aIr75aOr42b','Or42b','Ir64aIr75a'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Or42b'};
+    {'Ir64aIr75a'}];
+Gen2Cons = [5,10,12];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+save([meta.summationModelFold 'Ir64aIr75aOr42bCombination.mat'])
+fprintf('Or42b+Ir64aIr75a done in %d seconds.\n',round(toc));
+
+%% Ir64aIr75a Ir75a
+lab = [{'Ir75a','Ir64aOr42b','Ir64aIr75aOr42b','Ir75a','Ir64aOr42b'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Ir75a'};
+    {'Ir64aOr42b'}];
+Gen2Cons = [8,11,12];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,20,false);
+save([meta.summationModelFold 'Ir64aIr75aOr42bCombination2.mat'])
+fprintf('Ir64aOr42b+Ir75a done in %d seconds.\n',round(toc));
+
+%% Or42a Or42b Or92a
+lab = [{'Or42a','Or42bOr92a','Or42aOr42bOr92a','Or42a','Or42bOr92a'};
+ {'Before','Before','Before','',''}];
+
+labCov = [{'Or42a'};
+    {'Or42bOr92a'}];
+Gen2Cons = [4,9,13];tic;
+[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+save([meta.summationModelFold 'Or42aOr42bOr92aCombination.mat'])
+fprintf('Or42a+Or42bOr92a done in %d seconds.\n',round(toc));
 
 %% Plotting functions
 allMat = {'OrcoIr8aCombination.mat','Or42bOr92aCombination.mat',...
