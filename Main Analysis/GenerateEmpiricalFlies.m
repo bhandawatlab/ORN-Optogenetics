@@ -21,9 +21,9 @@ for i = 1:numel(genAll)
     tic;
     gen = genAll{i};
     % load data
-    load([meta.folderData '\' gen '_' meta.d '.mat'],'Data','curvPks','curvWalks','stopCond','boundCond')
+    load(strcat(string(meta.folderData),'\',gen,'_',meta.d, '.mat'),'Data','curvPks','curvWalks','stopCond','boundCond')
     % load spike prediction
-    load([meta.foldSpk '\' gen '_SpkRate.mat'],'sps_pred2','insideSS','baseline')
+    load(strcat(string(meta.foldSpk),'\',gen,'_SpkRate.mat'),'sps_pred2','insideSS','baseline')
     
     % create flies object
     f_orco = Flies(gen,Data.x,Data.y,Data.xHead,Data.yHead,sps_pred2,...
@@ -58,7 +58,7 @@ for i = 1:numel(genAll)
     GetKinematicModelParams(f_orco,condNdx,key,fe,meta,plotFigure);
     
     % intensity space of the arena
-    load('Data/Intensity_space2.mat','xN','p','Intensity_spaceN','convIV','convVI')
+    load(strcat(meta.DestPath,'/Data/Intensity_space2.mat'),'xN','p','Intensity_spaceN','convIV','convVI')
     f_orco.model.IntensitySpace.x = xN;
     f_orco.model.IntensitySpace.I = Intensity_spaceN;
     f_orco.model.IntensitySpace.p = p;
@@ -95,7 +95,7 @@ for i = 1:numel(genAll)
     
 %     % printing to pdf file
 %     if meta.plotFig
-%         fName = [meta.plotFold gen '_' meta.d meta.ext '_DataGen'];
+%         fName = strcat(string(meta.plotFold),gen,'_',meta.d,meta.ext,'_DataGen');
 %         fNum = get(gcf,'Number');
 %         for f = 1:fNum-1
 %             figure(f);
@@ -109,7 +109,7 @@ for i = 1:numel(genAll)
     
     % saving the fly object
     if meta.saveData
-        save([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
+        save(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');%_allTime
     end
     close all
     fprintf('Finished generating %s object in %d seconds\n',gen,round(toc))

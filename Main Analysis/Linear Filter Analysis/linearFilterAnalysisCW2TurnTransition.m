@@ -14,10 +14,11 @@ function [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transi
 %           b_enter = linear filters for turn prob when entering
 %   
 close all
-if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
-    mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+if plotFigure
+    if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
+        mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+    end
 end
-
 meta.delay = 15*30;
 meta.buffer = 1*30;
 meta.stNdx = find(strcmpi(f_orco.states.key  ,'sharp turns'));
@@ -38,9 +39,11 @@ else
 end
 
 thresh = 15;
+
 [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,turnProb_leaving,...
     turnProb_entering,turnProb_leaving_std,turnProb_entering_std] = ...
-    getDf_aligned_turnRates(f_orco,thresh,meta.delay+meta.buffer,turnNdxAbs,transitionsOnly,yl,f_orco.fs,plotFigure);
+    getDf_aligned_turnRates(f_orco,thresh,meta.delay,turnNdxAbs,transitionsOnly,yl,f_orco.fs);
+
 if plotFigure
     for i = 1:6
         subplot(3,2,i);

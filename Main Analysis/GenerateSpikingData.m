@@ -10,21 +10,21 @@ function [] = GenerateSpikingData(meta)
 addpath(genpath([pwd '/Subroutines']))
 
 % load in the LFP and firing rate filters
-load(meta.LFPFilterFile,'b','optFitN');bLFP = b(:,optFitN);
-load(meta.RateFilterFile,'b','optFitN');bSpkRate = b(:,optFitN);
+load(string(meta.LFPFilterFile),'b','optFitN');bLFP = b(:,optFitN);
+load(string(meta.RateFilterFile),'b','optFitN');bSpkRate = b(:,optFitN);
 R = [];
 fs_filter = 100;% filter sampling rate (Hz)
 fs = 30;% video sampling rate (Hz)
 
 progressbar(0,0)
-s = dir([meta.foldStim '\*.mat']);
+s = dir(strcat(string(meta.foldStim),'\*.mat'));
 for i = 1:numel(s)
     C = strsplit(s(i).name,'_');
     gen = C{1};
     
     % use the head position files and ignore the body position files
     if ~contains(s(i).name,'body','IgnoreCase',true)
-        load([meta.foldStim '\' s(i).name],'V2','V')
+        load(strcat(string(meta.foldStim),'\',s(i).name),'V2','V')
         maxV = max(V2(:));
         insideSS = calculateSS(maxV,bLFP,bSpkRate,fs_filter);
         baseline = calculateSS(0,bLFP,bSpkRate,fs_filter);
@@ -47,7 +47,7 @@ for i = 1:numel(s)
             progressbar([],p/nPartitions)
         end
         % save the firing rate data
-        save([meta.foldSpk '\' gen '_SpkRate.mat'],'sps_pred2','sps_pred','LFP_fit','ntFilt','V','insideSS','baseline')
+        save(strcat(string(meta.foldSpk),'\',gen,'_SpkRate.mat'),'sps_pred2','sps_pred','LFP_fit','ntFilt','V','insideSS','baseline')
     end
     progressbar(i/numel(s))
 end

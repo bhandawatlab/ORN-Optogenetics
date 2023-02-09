@@ -13,10 +13,11 @@ function [b_spdLeave,b_curvLeave,b_spdEnter,b_curvEnter] = ...
 %           b_curvEnter = linear filters for curvature when entering.
 %   
 close all
-if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
-    mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+if plotFigure
+    if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
+        mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+    end
 end
-
 fs = 100;
 close all
 % compute turn triggered averages
@@ -28,10 +29,11 @@ thresh = 15;
 yl = 'mm/s';
 [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,spd_leaving,...
     spd_entering,spd_leaving_std,spd_entering_std] = ...
-    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'spd',false,plotFigure);
+    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'spd',false);
+
 yl = 'degrees/s';
 [~,~,~,~,curv_leaving,curv_entering,curv_leaving_std,curv_entering_std] = ...
-    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'curv',false,plotFigure);
+    getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'curv',false);
 
 delay = 4*fs;
 curv_leaving = resample(curv_leaving,fs,f_orco.fs);

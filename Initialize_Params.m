@@ -15,52 +15,56 @@ function [meta] = Initialize_Params(Destination_path)    % clc
     B = string(A(:, 1));
 
     dateValIdx = find(B=='d');
-    meta.d = [strcat(erase(A(dateValIdx,2),"'"))];
+    meta.d = strcat(erase(A(dateValIdx,2),"'"));
+    meta.DestPath = Destination_path;
 
     dateValIdx = find(B=='foldDataModel');
-    meta.foldDataModel = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.foldDataModel = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
+    
+    dateValIdx = find(B=='plotFold');
+    meta.plotFold = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='foldRaw');
-    meta.foldRaw = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.foldRaw = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='foldStim');
-    meta.foldStim = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.foldStim = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='folderData');
-    meta.folderData = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.folderData = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='foldSpk');
-    meta.foldSpk = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.foldSpk = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='LFPFilterFile');
-    meta.LFPFilterFile = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.LFPFilterFile = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='RateFilterFile');
-    meta.RateFilterFile = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.RateFilterFile = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='Intensity2VoltageFile');
-    meta.Intensity2VoltageFile = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.Intensity2VoltageFile = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='spikingDataFile');
-    meta.spikingDataFile = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.spikingDataFile = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='trainingDataFolder');
-    meta.trainingDataFolder = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.trainingDataFolder = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='syntheticFlyFold');
-    meta.syntheticFlyFold = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.syntheticFlyFold = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='syntheticPlotFold');
-    meta.syntheticPlotFold = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.syntheticPlotFold = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='summationModelFold');
-    meta.summationModelFold = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.summationModelFold = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='calibrationFolder');
-    meta.calibrationFolder = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.calibrationFolder = strcat(Destination_path,erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='calibrationFile');
-    meta.calibrationFile = [strcat(Destination_path,erase(A(dateValIdx,2),"'"))];
+    meta.calibrationFile = strcat(erase(A(dateValIdx,2),"'"));
 
     dateValIdx = find(B=='fs_linFilter');
     meta.fs_linFilter = str2num(string(A(dateValIdx,2)));
