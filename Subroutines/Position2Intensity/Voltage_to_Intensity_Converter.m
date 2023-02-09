@@ -16,7 +16,7 @@ function [p,Rsq] = Voltage_to_Intensity_Converter(folder,file)
 
 % Processing of calibration file
 delta = 1/3;
-[~,~,raw] = xlsread([folder file]);
+[~,~,raw] = xlsread(strcat(folder,file));
 wattage = raw(:,2);
 wattage = wattage(2:end);
 wattageVal = cellfun(@(x) x(1:end-1), wattage, 'un', 0);

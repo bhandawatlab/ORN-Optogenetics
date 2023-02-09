@@ -1,5 +1,6 @@
 d:March2022
 foldDataModel:'\DataModel'
+plotFold: '\Figures'
 foldRaw:'\Data\DataRaw'
 foldStim:'\Data\DataStim'
 folderData: '\Data\DataGen'
