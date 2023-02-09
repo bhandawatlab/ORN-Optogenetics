@@ -5,7 +5,7 @@ tic;
 t1 = -20;
 t2 = 20;
 t3 = 15;
-plotFolder = [meta.plotFold  'SummationAnalysis\'];
+plotFolder = strcat(string(meta.plotFold),'\SummationAnalysis\');
 if ~exist(plotFolder, 'dir')
     mkdir(plotFolder)
 end
@@ -25,7 +25,7 @@ labCov = [{'Orco'};
 Gen2Cons = [1:3];tic;
 [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save([meta.summationModelFold 'OrcoIr8aCombination.mat'])
+save(strcat(string(meta.summationModelFold),'\OrcoIr8aCombination.mat'))
 fprintf('Orco+Ir8a done in %d seconds.\n',round(toc));
 
 %% Or42b Or92a
@@ -37,7 +37,7 @@ labCov = [{'Or42b'};
 Gen2Cons = [5,6,9];tic;
 [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
     stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save([meta.summationModelFold 'Or42bOr92aCombination.mat'])
+save(strcat(string(meta.summationModelFold),'\Or42bOr92aCombination.mat'))
 fprintf('Or42b+Or92a done in %d seconds.\n',round(toc));
 
 %% Ir64a Ir75a
@@ -880,7 +880,7 @@ function [stateKinAll,stateKinBaseline,stateKinBaselineMu,stateKinBaselineVar,..
 for i = 1 :numel(genAll)%2%
     gen = genAll{i};
     
-    load([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');
+    load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
     baseline = f_orco.spk(1);
     
     XX = f_orco.model.TurnBias.XX;

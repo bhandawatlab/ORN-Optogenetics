@@ -3,7 +3,7 @@ function [] = agentModelHandle(genAll,meta,agentModelMeta,generateFlies)
 delay = agentModelMeta.delay;
 dur = agentModelMeta.dur;
 
-progressbar(0,0,0)
+
 for g = 1:numel(genAll)
     gen = genAll{g};
     for ii = 1:numel(dur)
@@ -13,15 +13,17 @@ for g = 1:numel(genAll)
             cond = ['_CWdur' strrep(num2str(currDur),'.','') ...
                 '_CWdelay' strrep(num2str(currDelay),'.','')];
             
-            try
-                if generateFlies
-                    load([meta.folderObject '/' gen '_' meta.d meta.ext '.mat'],'f_orco');
-                    
+            if generateFlies
+                    progressbar(0,0,0)
+                    load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
                     % load information for calculating spike rate
                     LLFfs = 100; % linear filters for Intensity to ORN was calculated at 100 Hz
-                    load(meta.LFPFilterFile,'optFitN','b');bLFP = b(:,optFitN);
-                    load(meta.RateFilterFile,'optFitN','b');bRate = b(:,optFitN);
+                    load(string(meta.LFPFilterFile),'optFitN','b');
+                    bLFP = b(:,optFitN);
+                    load(string(meta.RateFilterFile),'optFitN','b');
+                    bRate = b(:,optFitN);
                     
+                    disp("Here 1")
                     % set up synthetic fly model parameters
                     params.fs = f_orco.fs;%30 hz
                     params.len = f_orco.nPt;%1080;
@@ -39,7 +41,7 @@ for g = 1:numel(genAll)
                     
                     %RunAndTumbleFinal032722(f_orco,params);
                     %RunAndTumbleKNNLinFilter(f_orco,params);
-                        
+                    disp("Here 2")
                     p = gcp('nocreate'); % If no pool, do not create new one.
                     if isempty(p)
                         p = parpool('local');
@@ -52,6 +54,7 @@ for g = 1:numel(genAll)
                             dfSmoothC{i},fSmoothC{i},tt_baseline{i}]...
                             = RunAndTumbleKNNLinFilter(f_orco,params);
                     end
+                    disp("Here 3")
                     toc;
                     synthFlys = synthFlysC{1};
                     %------
@@ -64,6 +67,7 @@ for g = 1:numel(genAll)
                         synthFlys.spk = [synthFlys.spk; synthFlysC{i}.spk];
                     end
                     %------
+                    disp("Here 4")
                     state = cell2mat(stateC');
                     nTurn = cell2mat(nTurnC');
                     spdAll = cell2mat(spdAllC');
@@ -115,25 +119,24 @@ for g = 1:numel(genAll)
                     dfSmooth(synthFlys.firstEntry>feThresh,:) = [];
                     synthFlys.firstEntry(synthFlys.firstEntry>feThresh,:) = [];
                     
-                    fName = ['RT_run' gen '_' meta.d meta.ext cond '.mat'];
+                    fName = strcat('RT_run',gen,'_',meta.d,meta.ext,cond,'.mat');
+                    fName2 = strcat('RT_run',gen,'_',meta.d,meta.ext,cond,'_flies.mat');
                     
                     % save the data
-                    save([meta.syntheticFlyFold fName],'-v7.3');%_BCNew2
-                    
-                    [synth_orco,f_orco] = GenerateSyntheticFlies(fName,gen,meta,true);
-                    
+                    save(strcat(string(meta.syntheticFlyFold),string(fName)),'-v7.3');%_BCNew2
+                    disp("Here 5")
+                    [synth_orco,f_orco] = GenerateSyntheticFlies(fName, gen,meta,true);
                     toc;
                     cab(1);
                     progressbar(g./numel(genAll),ii./numel(dur),jj./numel(delay))
                 else
-                    fName = ['RT_run' gen '_' meta.d '' cond '.mat'];
-                    fName2 = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
-                    [synth_orco,f_orco] = GenerateSyntheticFlies(fName,gen,meta,false);
-                    save([meta.syntheticFlyFold fName2],'synth_orco','f_orco');
+                    fName = strcat('RT_run',gen,'_',meta.d,cond,'.mat');%['RT_run' gen '_' meta.d '' cond '.mat'];
+                    fName2 = strcat('RT_run',gen,'_',meta.d,meta.ext,cond,'_flies.mat');%['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
+                    [synth_orco,f_orco] = GenerateSyntheticFlies(string(fName), gen,meta,false);
+                    save(strcat(string(meta.syntheticFlyFold),fName2),'synth_orco','f_orco');
                 end
-            catch
-                disp(['RT_run' gen '_' meta.d cond])
-            end
+                %disp(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'))
+            %end
         end
     end
 end

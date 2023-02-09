@@ -15,8 +15,8 @@ function [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transi
 %   
 close all
 if plotFigure
-    if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
-        mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+    if ~exist(strcat(string(meta.plotFold),'/LinearFilterAnalysis/'), 'dir')
+        mkdir(strcat(string(meta.plotFold),'/LinearFilterAnalysis/'))
     end
 end
 meta.delay = 15*30;
@@ -42,7 +42,7 @@ thresh = 15;
 
 [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,turnProb_leaving,...
     turnProb_entering,turnProb_leaving_std,turnProb_entering_std] = ...
-    getDf_aligned_turnRates(f_orco,thresh,meta.delay,turnNdxAbs,transitionsOnly,yl,f_orco.fs);
+    getDf_aligned_turnRates(f_orco,thresh,meta.delay,turnNdxAbs,transitionsOnly,yl,f_orco.fs, plotFigure);
 
 if plotFigure
     for i = 1:6
@@ -122,10 +122,10 @@ end
 if plotFigure
     for f = 1:get(gcf,'Number')
         figure(f);
-        print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFile '.ps'],'-loose','-append');
+        print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.ps'),'-loose','-append');
     end
-    ps2pdf('psfile', [meta.plotFold 'LinearFilterAnalysis/' figureFile '.ps'], 'pdffile', ...
-    [meta.plotFold 'LinearFilterAnalysis/' figureFile '.pdf'], 'gspapersize', 'letter',...
+    ps2pdf('psfile', strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.ps'), 'pdffile', ...
+    strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');
@@ -265,7 +265,7 @@ if plotFigure
     xlabel('meta.delay (s)');ylabel('delta firing rate (spikes/s^2)');
     
     
-    print('-painters','-dpdf',[meta.plotFold 'LinearFilterAnalysis/STA_sharpTurnAnalysis.pdf']);
+    print('-painters','-dpdf',strcat(string(meta.plotFold),'/LinearFilterAnalysis/STA_sharpTurnAnalysis.pdf'));
 end
 end
 

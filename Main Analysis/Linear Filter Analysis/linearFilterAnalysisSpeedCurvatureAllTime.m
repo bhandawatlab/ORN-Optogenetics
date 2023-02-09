@@ -14,8 +14,8 @@ function [b_spd,b_curv] = linearFilterAnalysisSpeedCurvatureAllTime(f_orco,meta)
 %               to curvature.
 %   
 close all
-if ~exist([meta.plotFold 'LinearFilterAnalysis/'], 'dir')
-    mkdir([meta.plotFold 'LinearFilterAnalysis/'])
+if ~exist(strcat(string(meta.plotFold),'/LinearFilterAnalysis/'), 'dir')
+    mkdir(strcat(string(meta.plotFold),'/LinearFilterAnalysis/'));
 end
 
 close all
@@ -51,7 +51,7 @@ for fly = 1:f_orco.nFly
     catch
         figure;title(['Not enough data for fly ' num2str(fly)]);
     end
-    print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFileCurv '.ps'],'-loose','-append');
+    print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFileCurv,'.ps'),'-loose','-append');
     yl = 'mm/s';
     try
         b_spd{fly} = generateLinearFilter_KinAllTime({f},currSpd,...
@@ -59,7 +59,7 @@ for fly = 1:f_orco.nFly
     catch
         figure;title(['Not enough data for fly ' num2str(fly)]);
     end
-    print('-painters','-dpsc2',[meta.plotFold 'LinearFilterAnalysis/' figureFileSpd '.ps'],'-loose','-append');
+    print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.ps'),'-loose','-append');
     
     XStimAllFly = [XStimAllFly;XStimNew];
     curvAllfly = [curvAllfly;curv];
@@ -67,13 +67,13 @@ for fly = 1:f_orco.nFly
     fAllfly = [fAllfly,f];
 end
 
-ps2pdf('psfile',[meta.plotFold 'LinearFilterAnalysis/' figureFileCurv '.ps'], 'pdffile', ...
-    [meta.plotFold 'LinearFilterAnalysis/' figureFileCurv '.pdf'], 'gspapersize', 'letter',...
+ps2pdf('psfile',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileCurv,'.ps'), 'pdffile', ...
+    strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileCurv,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');
-ps2pdf('psfile',[meta.plotFold 'LinearFilterAnalysis/' figureFileSpd '.ps'], 'pdffile', ...
-    [meta.plotFold 'LinearFilterAnalysis/' figureFileSpd '.pdf'], 'gspapersize', 'letter',...
+ps2pdf('psfile',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.ps'), 'pdffile', ...
+    strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');

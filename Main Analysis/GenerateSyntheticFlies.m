@@ -1,9 +1,10 @@
-function [synth_orco,f_orco] = GenerateSyntheticFlies(fName,gen,meta,savefile)
-C = strsplit(fName,'.');
-fName2 = [C{1} '_flies.mat'];
-[synth_orco,f_orco] = getSyntheticFlies([meta.syntheticFlyFold fName],gen,meta);
+function [synth_orco,f_orco] = GenerateSyntheticFlies(fName, gen,meta,savefile)
+%C = strsplit(fName,'.');
+%fName2 = [C{1} '_flies.mat'];
+fpath = strcat(string(meta.syntheticFlyFold),fName);
+[synth_orco,f_orco] = getSyntheticFlies(fpath,gen,meta);
 if savefile
-    save([meta.syntheticFlyFold fName2],'synth_orco','f_orco','-v7.3');
+    save(strcat(string(meta.syntheticFlyFold),fName),'synth_orco','f_orco','-v7.3');
 end
 
 end
@@ -61,7 +62,7 @@ meta.ratio(3) = meta.ratio(3).*synth_orco.fs./f_orco.fs;
 GetKinematicModelParams(synth_orco,condNdx,key,fe,meta,true);
 
 % intensity space of the arena
-load('Data/Intensity_space2.mat','xN','p','Intensity_spaceN','convIV','convVI')
+load(strcat(meta.DestPath,'/Data/Intensity_space2.mat'),'xN','p','Intensity_spaceN','convIV','convVI')
 synth_orco.model.IntensitySpace.x = xN;
 synth_orco.model.IntensitySpace.I = Intensity_spaceN;
 synth_orco.model.IntensitySpace.p = p;

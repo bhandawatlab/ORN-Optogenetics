@@ -1,96 +1,96 @@
 function PlotAllFiguresEmp(genAll,genRetinal,meta)
 
-% load in all data (both retinal and controls)
-%--------------------------------------------------------------------------
-% (for both control and retinal)
-f_orcoAll = cell(1,numel(genAll));
-for i = 1:numel(genAll)
-    gen = genAll{i};
-    try
-        load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
-        f_orcoAll{i} = f_orco;
-    catch
-        f_orcoAll{i} = [];
-    end
-end
-
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% plotting analysis figures for retinal and controls %%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
-% plot time 2 return
-close all;fNum = 1;
-fNum = plotTime2Return(f_orcoAll,meta.border,fNum);
-disp("Here")
-%printFigures(fNum,[meta.plotFold 'GeneralBehavior/'],'Time2Return_allGenotypes')
-%%
-% plot probability of being inside
-close all;fNum = 1;
-for i = 1:numel(f_orcoAll)
-    if mod(i,10)==1
-        figure(fNum);set(gcf,'Position',[2 42 838 924])
-        k = 1;fNum = fNum+1;
-    end
-    subplot(5,2,k);
-    tmpFly.rHead = f_orcoAll{i}.rH;
-    plottingProbInside(tmpFly,meta.border,f_orcoAll{i}.nFly,...
-        f_orcoAll{i}.fs,f_orcoAll{i}.lightOn,[]);
-    title(f_orcoAll{i}.id);
-    xlabel('time (minutes)');
-    ylabel('Probability inside')
-    k = k+1;
-end
-printFigures(fNum,strcat(string(meta.plotFold), '\' ,'GeneralBehavior\'),'ProbabilityInside_allGenotypes')
-%% 
-% plot tracks
-close all;
-for i = 1:numel(f_orcoAll)
-    plotXYTracks(f_orcoAll{i},meta.border,f_orcoAll{i}.nFly,true,'')
-    printFigures(get(gcf,'Number')+1,'Figures/XY tracks/',[f_orcoAll{i}.id ' Tracks'])
-    close all;
-end
-%% 
-% plot radial occupancy (for both control and retinal)
-close all;fNum = 1;
-stopSpd = 0;%meta.stopThresh;
-[fNum] = plotRadialOccupancy(f_orcoAll,'H',meta.border,stopSpd,0,fNum);% plots radial occupancy with stops
-printFigures(fNum,strcat(string(meta.plotFold),'GeneralBehavior/'),'RadialOccupancy_allGenotypes')
-
-% plot radial occupancy (for both control and retinal)
-close all;fNum = 1;
-stopSpd = meta.stopThresh;
-[fNum] = plotRadialOccupancy(f_orcoAll,'H',meta.border,stopSpd,0,fNum);% plots radial occupancy with stops
-printFigures(fNum,strcat(string(meta.plotFold),'GeneralBehavior/'),'RadialOccupancy_noStops_allGenotypes')
-
-%%
-% plot spatial-temporal position
-close all;fNum = 1;
-for i = 1:numel(f_orcoAll)
-    if mod(i,6)==1
-        figure(fNum);set(gcf,'Position',[2 42 1000 924])
-        fNum = fNum+1;k = 1;
-    end
-    subplot(3,2,k);
-    plotRadialPosition(f_orcoAll{i},meta.border,'after',true,'dt',...
-        2.*f_orcoAll{i}.fs,'clims',[0 0.01]);
-    title(f_orcoAll{i}.id)
-    k = k+1;
-    
-    if i == numel(f_orcoAll) || k==7
-        printFigures([fNum-1 nan],strcat(string(meta.plotFold),'GeneralBehavior/'),...
-            ['SpatialTemporal_Density_' num2str(fNum-1)])
-    end
-end
-%printFigures(fNum,[meta.plotFold 'GeneralBehavior/'],'SpatialTemporal_Density_AllGenotypes')
-
-%%
-% plot KS test of retinal vs control (only for time averaged)
-if meta.adaptation == false
-    close all;fNum = 1;
-    [fNum,~,~] = plotStatTestRetContKNN(reshape(f_orcoAll,2,[]),meta.States2Plot_KNN,0,0.05,fNum);
-    printFigures(fNum,strcat(string(meta.plotFold),'\',meta.foldName),'KNN_Control_Retinal_KS-test_p_05_color')
-end
+% % load in all data (both retinal and controls)
+% %--------------------------------------------------------------------------
+% % (for both control and retinal)
+% f_orcoAll = cell(1,numel(genAll));
+% for i = 1:numel(genAll)
+%     gen = genAll{i};
+%     try
+%         load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
+%         f_orcoAll{i} = f_orco;
+%     catch
+%         f_orcoAll{i} = [];
+%     end
+% end
+% 
+% %%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%% plotting analysis figures for retinal and controls %%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% 
+% % plot time 2 return
+% close all;fNum = 1;
+% fNum = plotTime2Return(f_orcoAll,meta.border,fNum);
+% disp("Here")
+% %printFigures(fNum,[meta.plotFold 'GeneralBehavior/'],'Time2Return_allGenotypes')
+% %%
+% % plot probability of being inside
+% close all;fNum = 1;
+% for i = 1:numel(f_orcoAll)
+%     if mod(i,10)==1
+%         figure(fNum);set(gcf,'Position',[2 42 838 924])
+%         k = 1;fNum = fNum+1;
+%     end
+%     subplot(5,2,k);
+%     tmpFly.rHead = f_orcoAll{i}.rH;
+%     plottingProbInside(tmpFly,meta.border,f_orcoAll{i}.nFly,...
+%         f_orcoAll{i}.fs,f_orcoAll{i}.lightOn,[]);
+%     title(f_orcoAll{i}.id);
+%     xlabel('time (minutes)');
+%     ylabel('Probability inside')
+%     k = k+1;
+% end
+% printFigures(fNum,strcat(string(meta.plotFold), '\' ,'GeneralBehavior\'),'ProbabilityInside_allGenotypes')
+% %% 
+% % plot tracks
+% close all;
+% for i = 1:numel(f_orcoAll)
+%     plotXYTracks(f_orcoAll{i},meta.border,f_orcoAll{i}.nFly,true,'')
+%     printFigures(get(gcf,'Number')+1,'Figures/XY tracks/',[f_orcoAll{i}.id ' Tracks'])
+%     close all;
+% end
+% %% 
+% % plot radial occupancy (for both control and retinal)
+% close all;fNum = 1;
+% stopSpd = 0;%meta.stopThresh;
+% [fNum] = plotRadialOccupancy(f_orcoAll,'H',meta.border,stopSpd,0,fNum);% plots radial occupancy with stops
+% printFigures(fNum,strcat(string(meta.plotFold),'GeneralBehavior/'),'RadialOccupancy_allGenotypes')
+% 
+% % plot radial occupancy (for both control and retinal)
+% close all;fNum = 1;
+% stopSpd = meta.stopThresh;
+% [fNum] = plotRadialOccupancy(f_orcoAll,'H',meta.border,stopSpd,0,fNum);% plots radial occupancy with stops
+% printFigures(fNum,strcat(string(meta.plotFold),'GeneralBehavior/'),'RadialOccupancy_noStops_allGenotypes')
+% 
+% %%
+% % plot spatial-temporal position
+% close all;fNum = 1;
+% for i = 1:numel(f_orcoAll)
+%     if mod(i,6)==1
+%         figure(fNum);set(gcf,'Position',[2 42 1000 924])
+%         fNum = fNum+1;k = 1;
+%     end
+%     subplot(3,2,k);
+%     plotRadialPosition(f_orcoAll{i},meta.border,'after',true,'dt',...
+%         2.*f_orcoAll{i}.fs,'clims',[0 0.01]);
+%     title(f_orcoAll{i}.id)
+%     k = k+1;
+%     
+%     if i == numel(f_orcoAll) || k==7
+%         printFigures([fNum-1 nan],strcat(string(meta.plotFold),'GeneralBehavior/'),...
+%             ['SpatialTemporal_Density_' num2str(fNum-1)])
+%     end
+% end
+% %printFigures(fNum,[meta.plotFold 'GeneralBehavior/'],'SpatialTemporal_Density_AllGenotypes')
+% 
+% %%
+% % plot KS test of retinal vs control (only for time averaged)
+% if meta.adaptation == false
+%     close all;fNum = 1;
+%     [fNum,~,~] = plotStatTestRetContKNN(reshape(f_orcoAll,2,[]),meta.States2Plot_KNN,0,0.05,fNum);
+%     printFigures(fNum,strcat(string(meta.plotFold),'\',meta.foldName),'KNN_Control_Retinal_KS-test_p_05_color')
+% end
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,7 @@ f_orcoAll = cell(1,numel(genRetinal));
 for i = 1:numel(genRetinal)
     gen = genRetinal{i};
     try
-        load(strcat(string(meta.foldDataModel),gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
+        load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
         % perform permutation test across time slices for retinal flies (only for adaptation)
         if meta.adaptation == true
             [f_orco] = calcKNN_Habituation_PermutationTest(f_orco,1:4);
@@ -207,7 +207,6 @@ if meta.adaptation == true
         '__allGenotypes')
 end
 
-f_orcoAll = cell(1,numel(genRetinal));
 % plot comparison of different distribution fits
 if meta.adaptation == false
     close all;fNum = 1;

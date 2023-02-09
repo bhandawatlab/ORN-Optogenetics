@@ -4,7 +4,7 @@ function [] = PlotAllFiguresEmpSynth(genAll,meta,agentModelMeta)
 dur = agentModelMeta.dur;
 delay = agentModelMeta.delay;
 
-plotFolder = [meta.syntheticPlotFold];
+plotFolder = string(meta.syntheticPlotFold);
 
 for ii = 1:numel(dur)
     for jj = 1:numel(delay)
@@ -18,8 +18,8 @@ for ii = 1:numel(dur)
         k = 1;tic;
         for g = 1:numel(genAll)
             gen = genAll{g};
-            fName = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
-            load([meta.syntheticFlyFold fName],'f_orco','synth_orco')
+            fName = strcat('RT_run',gen,'_',meta.d,meta.ext,cond,'_flies.mat');
+            load(strcat(string(meta.syntheticFlyFold),fName),'f_orco','synth_orco')
             
             f_orco.id = [f_orco.id ' dur=' num2str(currDur) ', delay=' num2str(currDelay)];
             synth_orco.id = [synth_orco.id ' dur=' num2str(currDur) ', delay=' num2str(currDelay)];
