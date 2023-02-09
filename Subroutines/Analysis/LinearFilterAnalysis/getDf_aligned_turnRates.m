@@ -1,6 +1,6 @@
 function [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,...
     turnProb_leaving,turnProb_entering,turnProb_leaving_std,turnProb_entering_std] = ...
-    getDf_aligned_turnRates(f_orco,thresh,delay,turnNdxAbs,transitionsOnly,yl,fs)
+    getDf_aligned_turnRates(f_orco,thresh,delay,turnNdxAbs,transitionsOnly,yl,fs,plotFig)
 %getDf_aligned_turnRates  calculates the firing rate, change in firing
 %   rate, and the turn probability when leaving or entering (aligned by 
 %   peak in change in firing rate)
@@ -113,32 +113,34 @@ turnProb_entering_std = std(bootstrap_mean);
 turnProb_leaving = smoothdata(nanmean(turn_leaving_all),'movmean',30);
 turnProb_entering = smoothdata(nanmean(turn_entering_all),'movmean',30);
 
-figure;set(gcf,'Position',[2 42 838 924]);
-subplot(3,2,1);shadedErrorBar((-delay:delay)./fs,turnProb_leaving,turnProb_leaving_std);
-xlabel('delay');ylabel(yl);title('Leaving')
-subplot(3,2,2);shadedErrorBar((-delay:delay)./fs,turnProb_entering,turnProb_entering_std);
-xlabel('delay');ylabel(yl);title('Entering')
-subplot(3,2,3);shadedErrorBar((-delay:delay)./fs,df_leaving_all,df_leaving_std);
-xlabel('delay');ylabel('spk/s^2');title('Leaving')
-subplot(3,2,4);shadedErrorBar((-delay:delay)./fs,df_entering_all,df_entering_std);
-xlabel('delay');ylabel('spk/s^2');title('Entering')
-subplot(3,2,5);shadedErrorBar((-delay:delay)./fs,f_leaving_all,f_leaving_std);
-xlabel('delay');ylabel('spk/s');title('Leaving')
-subplot(3,2,6);shadedErrorBar((-delay:delay)./fs,f_entering_all,f_entering_std);
-xlabel('delay');ylabel('spk/s');title('Entering')
+if plotFig
+    figure;set(gcf,'Position',[2 42 838 924]);
+    subplot(3,2,1);shadedErrorBar((-delay:delay)./fs,turnProb_leaving,turnProb_leaving_std);
+    xlabel('delay');ylabel(yl);title('Leaving')
+    subplot(3,2,2);shadedErrorBar((-delay:delay)./fs,turnProb_entering,turnProb_entering_std);
+    xlabel('delay');ylabel(yl);title('Entering')
+    subplot(3,2,3);shadedErrorBar((-delay:delay)./fs,df_leaving_all,df_leaving_std);
+    xlabel('delay');ylabel('spk/s^2');title('Leaving')
+    subplot(3,2,4);shadedErrorBar((-delay:delay)./fs,df_entering_all,df_entering_std);
+    xlabel('delay');ylabel('spk/s^2');title('Entering')
+    subplot(3,2,5);shadedErrorBar((-delay:delay)./fs,f_leaving_all,f_leaving_std);
+    xlabel('delay');ylabel('spk/s');title('Leaving')
+    subplot(3,2,6);shadedErrorBar((-delay:delay)./fs,f_entering_all,f_entering_std);
+    xlabel('delay');ylabel('spk/s');title('Entering')
 
-% figure;set(gcf,'Position',[2 42 838 924]);
-% subplot(3,2,1);plot((-delay:delay)./fs,turnProb_leaving);
-% xlabel('delay');ylabel(yl);title('Leaving')
-% subplot(3,2,2);plot((-delay:delay)./fs,turnProb_entering);
-% xlabel('delay');ylabel(yl);title('Entering')
-% subplot(3,2,3);plot((-delay:delay)./fs,df_leaving_all);
-% xlabel('delay');ylabel('spk/s^2');title('Leaving')
-% subplot(3,2,4);plot((-delay:delay)./fs,df_entering_all);
-% xlabel('delay');ylabel('spk/s^2');title('Entering')
-% subplot(3,2,5);plot((-delay:delay)./fs,f_leaving_all);
-% xlabel('delay');ylabel('spk/s');title('Leaving')
-% subplot(3,2,6);plot((-delay:delay)./fs,f_entering_all);
-% xlabel('delay');ylabel('spk/s');title('Entering')
+    % figure;set(gcf,'Position',[2 42 838 924]);
+    % subplot(3,2,1);plot((-delay:delay)./fs,turnProb_leaving);
+    % xlabel('delay');ylabel(yl);title('Leaving')
+    % subplot(3,2,2);plot((-delay:delay)./fs,turnProb_entering);
+    % xlabel('delay');ylabel(yl);title('Entering')
+    % subplot(3,2,3);plot((-delay:delay)./fs,df_leaving_all);
+    % xlabel('delay');ylabel('spk/s^2');title('Leaving')
+    % subplot(3,2,4);plot((-delay:delay)./fs,df_entering_all);
+    % xlabel('delay');ylabel('spk/s^2');title('Entering')
+    % subplot(3,2,5);plot((-delay:delay)./fs,f_leaving_all);
+    % xlabel('delay');ylabel('spk/s');title('Leaving')
+    % subplot(3,2,6);plot((-delay:delay)./fs,f_entering_all);
+    % xlabel('delay');ylabel('spk/s');title('Entering')
+end
 
 end
