@@ -1,6 +1,6 @@
 function [df_leaving_all,df_entering_all,f_leaving_all,f_entering_all,...
     kinematics_leaving,kinematics_entering,kinematics_leaving_std,kinematics_entering_std] = ...
-    getDf_aligned_kinematics(f_orco,thresh,delay,yl,type,singleTrial)
+    getDf_aligned_kinematics(f_orco,thresh,delay,yl,type,singleTrial,plotFig)
 %getDf_aligned_kinematics  calculates the firing rate, change in firing
 %   rate, and the kinematics when leaving or entering (aligned by peak in
 %   change in firing rate)
@@ -93,19 +93,21 @@ kinematics_entering_std = std(bootstrap_mean);
 kinematics_leaving = smoothdata(nanmean(kinematics_leaving_all),'movmean',smoothWindow);
 kinematics_entering = smoothdata(nanmean(kinematics_entering_all),'movmean',smoothWindow);
 
-figure;set(gcf,'Position',[2 42 838 924]);
-subplot(3,2,1);plot((-delay:delay)./30,kinematics_leaving);
-xlabel('delay');ylabel(yl);title('Leaving')
-subplot(3,2,2);plot((-delay:delay)./30,kinematics_entering);
-xlabel('delay');ylabel(yl);title('Entering')
-subplot(3,2,3);plot((-delay:delay)./30,df_leaving_all);
-xlabel('delay');ylabel('spk/s^2');title('Leaving')
-subplot(3,2,4);plot((-delay:delay)./30,df_entering_all);
-xlabel('delay');ylabel('spk/s^2');title('Entering')
-subplot(3,2,5);plot((-delay:delay)./30,f_leaving_all);
-xlabel('delay');ylabel('spk/s');title('Leaving')
-subplot(3,2,6);plot((-delay:delay)./30,f_entering_all);
-xlabel('delay');ylabel('spk/s');title('Entering')
+if plotFig
+    figure;set(gcf,'Position',[2 42 838 924]);
+    subplot(3,2,1);plot((-delay:delay)./30,kinematics_leaving);
+    xlabel('delay');ylabel(yl);title('Leaving')
+    subplot(3,2,2);plot((-delay:delay)./30,kinematics_entering);
+    xlabel('delay');ylabel(yl);title('Entering')
+    subplot(3,2,3);plot((-delay:delay)./30,df_leaving_all);
+    xlabel('delay');ylabel('spk/s^2');title('Leaving')
+    subplot(3,2,4);plot((-delay:delay)./30,df_entering_all);
+    xlabel('delay');ylabel('spk/s^2');title('Entering')
+    subplot(3,2,5);plot((-delay:delay)./30,f_leaving_all);
+    xlabel('delay');ylabel('spk/s');title('Leaving')
+    subplot(3,2,6);plot((-delay:delay)./30,f_entering_all);
+    xlabel('delay');ylabel('spk/s');title('Entering')
+end
 
 if singleTrial
     df_leaving_all = cellfun(@(x) mean(x),df_leaving_aligned,'UniformOutput',false);
