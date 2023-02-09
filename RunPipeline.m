@@ -1,9 +1,25 @@
-clear;close all hidden
-%%
-adaptation = false;
-plotFig = false;
-plotSupplements = true;
-[meta] = setupMetaInfo(adaptation,plotFig,plotSupplements);
+clear all;
+close all hidden
+
+dt = datestr(now, 'yyyymmdd-HH_MM');% Download Datset
+if ~exist('Dataset.zip', 'file')
+    outfilename = websave('Dataset.zip','https://www.dropbox.com/s/qjyx5voz82onfic/Data.zip?dl=1');
+end
+EXP_folder = ['Experiment_' dt];
+if ~exist(EXP_folder, 'dir')
+        mkdir(EXP_folder);
+end
+unzip('Dataset.zip',['Experiment_' dt]);
+disp("Dataset Downloaded and Extracted");
+
+Destination_path = [pwd '\' EXP_folder];
+%Initialization
+[meta] = Initialize_Params(Destination_path);
+% %%
+% adaptation = false;
+% plotFig = false;
+% plotSupplements = true;
+% [meta] = setupMetaInfo(adaptation,plotFig,plotSupplements);
 
 % set genotypes
 gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
@@ -32,7 +48,7 @@ if meta.dataFromRaw
     %--------------------------------------------------------------------------
     % generate sharp turn/curved walk data
     disp('Generating sharp turn curved walk data files...')
-    load('Data/BestFit5.mat','GlobMinX');
+    load([Destination_path 'Data/BestFit5.mat'],'GlobMinX');
     genSTCWDat(genAll,meta,GlobMinX);
     %--------------------------------------------------------------------------
 end
