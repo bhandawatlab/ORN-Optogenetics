@@ -3,8 +3,7 @@ function [fNum] = plotDistributionComparisons(f_orcoAll,state2Cons,fNum)
 nGen = numel(f_orcoAll);
 for gen = 1:nGen
     f_orco = f_orcoAll{gen};
-    m = f_orco.model.params;
-    
+    m = f_orco.model.params;  
     distTypes = m{1}.KNN.DistTypes;
     distTypes = strrep(distTypes,'Normal', 'Norm');
     distTypes = strrep(distTypes,'Lognormal', 'logN');
