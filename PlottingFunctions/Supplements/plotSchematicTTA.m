@@ -26,6 +26,7 @@ for fly = 1:8
     currYH = f_orco.yH(fly,tt);
     currF = f_orco.spk(fly,tt);
     curv = f_orco.curv(fly,tt).*180./pi.*f_orco.fs;
+    curv(f_orco.states.ndx(fly,tt)==stopNdx) = 0;%set the curvature at stops to be 0
     
     figure;set(gcf,'Position',[2 42 838 924]);
     subplot(4,1,[1 2]);hold on;

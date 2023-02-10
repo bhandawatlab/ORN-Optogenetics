@@ -16,7 +16,8 @@ sliding_mean = tmp(1:len);
  
 end
  
-function [bin_inside_rim_sliding_SEM,bin_inside_rim_sliding_mean,inside_rim,framesinBin] = analysisFunc(Flys,border,numflies,startPts,type)
+function [bin_inside_rim_sliding_SEM,bin_inside_rim_sliding_mean,inside_rim,framesinBin] = analysisFunc...
+    (Flys,border,numflies,startPts,type)
  
 inside_rimTmp = Flys.rHead'<border;
 time_to_end = size(inside_rimTmp,1)-min(startPts)+1;

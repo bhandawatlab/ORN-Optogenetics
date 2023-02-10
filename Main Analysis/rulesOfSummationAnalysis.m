@@ -1,11 +1,12 @@
 function [] = rulesOfSummationAnalysis(genAll,meta)
+% summation model 
 close all
 tic;
 
 t1 = -20;
 t2 = 20;
 t3 = 15;
-plotFolder = strcat(string(meta.plotFold),'\SummationAnalysis\');
+plotFolder = [meta.plotFold  'SummationAnalysis\'];
 if ~exist(plotFolder, 'dir')
     mkdir(plotFolder)
 end
@@ -18,146 +19,178 @@ RegionLabel = {'NegDF','PosDF','HighF','Inh','LowF'};
 
 %% Orco Ir8a
 lab = [{'Orco','Ir8a','OrcoIr8a','Orco','Ir8a'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Orco'};
-    {'Ir8a'}];
-Gen2Cons = [1:3];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save(strcat(string(meta.summationModelFold),'\OrcoIr8aCombination.mat'))
-fprintf('Orco+Ir8a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Orco'};{'Ir8a'}];
+gen2Cons = {'Orco Retinal', 'Ir8a Retinal','Orco Ir8a Retinal'};
+try
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+    save([meta.summationModelFold 'OrcoIr8aCombination.mat'])
+    fprintf('Orco+Ir8a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Or42b Or92a
 lab = [{'Or42b','Or92a','Or42bOr92a','Or42b','Or92a'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Or42b'};
-    {'Or92a'}];
-Gen2Cons = [5,6,9];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save(strcat(string(meta.summationModelFold),'\Or42bOr92aCombination.mat'))
-fprintf('Or42b+Or92a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Or42b'};{'Or92a'}];
+gen2Cons = {'Or42b Retinal', 'Or92a Retinal','Or42b Or92a Retinal'};
+try
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+    save([meta.summationModelFold 'Or42bOr92aCombination.mat'])
+    fprintf('Or42b+Or92a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Ir64a Ir75a
 lab = [{'Ir64a','Ir75a','Ir64aIr75a','Ir64a','Ir75a'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Ir64a'};
-    {'Ir75a'}];
-Gen2Cons = [7,8,10];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save([meta.summationModelFold 'Ir64aIr75aCombination.mat'])
-fprintf('Ir64a+Ir75a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Ir64a'};{'Ir75a'}];
+try
+    gen2Cons = {'Ir64a Retinal', 'Ir75a Retinal','Ir64a Ir75a Retinal'};
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+    save([meta.summationModelFold 'Ir64aIr75aCombination.mat'])
+    fprintf('Ir64a+Ir75a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Or42b Ir64a
 lab = [{'Or42b','Ir64a','Or42bIr64a','Or42b','Ir64a'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Or42b'};
-    {'Ir64a'}];
-Gen2Cons = [5,7,11];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save([meta.summationModelFold 'Or42bIr64aCombination.mat'])
-fprintf('Or42b+Ir64a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Or42b'};{'Ir64a'}];
+gen2Cons = {'Or42b Retinal', 'Ir64a Retinal','Ir64a Or42b Retinal'};
+try
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+    save([meta.summationModelFold 'Or42bIr64aCombination.mat'])
+    fprintf('Or42b+Ir64a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Ir64aIr75a Or42b
 lab = [{'Or42b','Ir64aIr75a','Ir64aIr75aOr42b','Or42b','Ir64aIr75a'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Or42b'};
-    {'Ir64aIr75a'}];
-Gen2Cons = [5,10,12];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save([meta.summationModelFold 'Ir64aIr75aOr42bCombination.mat'])
-fprintf('Or42b+Ir64aIr75a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Or42b'};{'Ir64aIr75a'}];
+gen2Cons = {'Or42b Retinal', 'Ir64a Ir75a Retinal','Ir64a Ir75a Or42b Retinal'};
+try
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+    save([meta.summationModelFold 'Ir64aIr75aOr42bCombination.mat'])
+    fprintf('Or42b+Ir64aIr75a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Ir64aIr75a Ir75a
 lab = [{'Ir75a','Ir64aOr42b','Ir64aIr75aOr42b','Ir75a','Ir64aOr42b'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Ir75a'};
-    {'Ir64aOr42b'}];
-Gen2Cons = [8,11,12];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,20,false);
-save([meta.summationModelFold 'Ir64aIr75aOr42bCombination2.mat'])
-fprintf('Ir64aOr42b+Ir75a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Ir75a'};{'Ir64aOr42b'}];
+gen2Cons = {'Ir75a Retinal', 'Ir64a Or42b Retinal','Ir64a Ir75a Or42b Retinal'};
+try
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,20,false);
+    save([meta.summationModelFold 'Ir64aIr75aOr42bCombination2.mat'])
+    fprintf('Ir64aOr42b+Ir75a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Or42a Or42b Or92a
 lab = [{'Or42a','Or42bOr92a','Or42aOr42bOr92a','Or42a','Or42bOr92a'};
- {'Before','Before','Before','',''}];
-
-labCov = [{'Or42a'};
-    {'Or42bOr92a'}];
-Gen2Cons = [4,9,13];tic;
-[allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
-    stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
-save([meta.summationModelFold 'Or42aOr42bOr92aCombination.mat'])
-fprintf('Or42a+Or42bOr92a done in %d seconds.\n',round(toc));
+    {'Before','Before','Before','',''}];
+labCov = [{'Or42a'};{'Or42bOr92a'}];
+gen2Cons = {'Or42a Retinal', 'Or42b Or92a Retinal','Or42a Or42b Or92a Retinal'};
+try
+    Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
+    [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
+        stateKinBaseline,Gen2Cons,lab,labCov,RegionLabel,10,false);
+    save([meta.summationModelFold 'Or42aOr42bOr92aCombination.mat'])
+    fprintf('Or42a+Or42bOr92a done in %d seconds.\n',round(toc));
+catch
+    fprintf('missing %s, %s, or %s fly data\n',gen2Cons{1},gen2Cons{2},gen2Cons{3})
+end
 
 %% Plotting functions
 allMat = {'OrcoIr8aCombination.mat','Or42bOr92aCombination.mat',...
     'Ir64aIr75aCombination.mat','Or42bIr64aCombination.mat',...
     'Ir64aIr75aOr42bCombination.mat','Ir64aIr75aOr42bCombination2.mat',...
     'Or42aOr42bOr92aCombination.mat'};
-for i = 1:numel(allMat)
-    allMat{i} = [meta.summationModelFold allMat{i}];
+
+% check if any file is missing
+missingFilesNdx = find(~cellfun(@(x) exist(x, 'file')==2, ...
+    append(meta.summationModelFold,allMat)));
+for i = 1:numel(missingFilesNdx)
+    fprintf('missing %s data file\n',allMat{missingFIlesNdx(i)})
 end
-
-%plot posterior
-close all
-plotPosterior(allMat,plotFolder);
-
-% plot synergy
-close all
-fNum = 1;
-fNum = plotSynergy(allMat,'alpha',true,fNum);
-fNum = plotSynergy(allMat,'full',true,fNum);
-fNum = plotSynergy(allMat,'alpha',false,fNum);
-fNum = plotSynergy(allMat,'full',false,fNum);
-fNum = plotCovariance(allMat,fNum);
-
-nORN = [36,5,41,1,1,1,1,1,2,2,2,3,3];
-states2Cons = [1,2,3,4,7];
-load(allMat{end},'stateKinBaseline','stateKinAll','RegionLabel','f_orco');
-fNum = plotSynergisticByNumberOfORN(f_orco,stateKinBaseline,stateKinAll,...
-    RegionLabel,nORN,states2Cons,fNum);
-
-% states2Cons = [1,2,3,4];
-% newOrder = [2,3,1,4,5];
-% plotLooseRigid(allMat,states2Cons,newOrder,fNum);
-% printFigures([plotFolder 'ORN optogenetics_Synergy_Cov'])
-% 
-% close all
-% plotSyn = true;
-% type = 'full';
-% plotSynergyPosteriorByROI(allMat,type,plotSyn);
-% printFigures([plotFolder 'ORN optogenetics_SynergyPosteriorByROI_full'])
-% 
-% close all
-% plotSyn = true;
-% type = 'alpha';
-% plotSynergyPosteriorByROI(allMat,type,plotSyn);
-% printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_alpha'])
-% 
-% 
-% close all
-% type = 'absolute';%relative
-% threshold = [0.5,0.5,1,0.5];
-% plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
-% printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative3'])
-
-close all
-type = 'relative';%absolute
-%threshold = [0.15,0.15,0.15,0.15];
-threshold = [0.1,0.1,0.1,0.1];
-plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
-printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative'])
+if numel(missingFilesNdx)==0
+    for i = 1:numel(allMat)
+        allMat{i} = [meta.summationModelFold allMat{i}];
+    end
+    
+    %plot posterior
+    close all
+    plotPosterior(allMat,plotFolder);
+    
+    % plot synergy
+    close all
+    fNum = 1;
+    fNum = plotSynergy(allMat,'alpha',true,fNum);
+    fNum = plotSynergy(allMat,'full',true,fNum);
+    fNum = plotSynergy(allMat,'alpha',false,fNum);
+    fNum = plotSynergy(allMat,'full',false,fNum);
+    fNum = plotCovariance(allMat,fNum);
+    
+    nORN = [36,5,41,1,1,1,1,1,2,2,2,3,3];
+    states2Cons = [1,2,3,4,7];
+    load(allMat{end},'stateKinBaseline','stateKinAll','RegionLabel','f_orco');
+    fNum = plotSynergisticByNumberOfORN(f_orco,stateKinBaseline,stateKinAll,...
+        RegionLabel,nORN,states2Cons,fNum);
+    
+    close all
+    type = 'relative';%absolute
+    %threshold = [0.15,0.15,0.15,0.15];
+    threshold = [0.1,0.1,0.1,0.1];
+    plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
+    printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative'])
+    
+    
+    %% older plots not used
+    % states2Cons = [1,2,3,4];
+    % newOrder = [2,3,1,4,5];
+    % plotLooseRigid(allMat,states2Cons,newOrder,fNum);
+    % printFigures([plotFolder 'ORN optogenetics_Synergy_Cov'])
+    %
+    % close all
+    % plotSyn = true;
+    % type = 'full';
+    % plotSynergyPosteriorByROI(allMat,type,plotSyn);
+    % printFigures([plotFolder 'ORN optogenetics_SynergyPosteriorByROI_full'])
+    %
+    % close all
+    % plotSyn = true;
+    % type = 'alpha';
+    % plotSynergyPosteriorByROI(allMat,type,plotSyn);
+    % printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_alpha'])
+    %
+    %
+    % close all
+    % type = 'absolute';%relative
+    % threshold = [0.5,0.5,1,0.5];
+    % plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
+    % printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative3'])
+end
 
 end
 
@@ -880,7 +913,7 @@ function [stateKinAll,stateKinBaseline,stateKinBaselineMu,stateKinBaselineVar,..
 for i = 1 :numel(genAll)%2%
     gen = genAll{i};
     
-    load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
+    load([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');
     baseline = f_orco.spk(1);
     
     XX = f_orco.model.TurnBias.XX;

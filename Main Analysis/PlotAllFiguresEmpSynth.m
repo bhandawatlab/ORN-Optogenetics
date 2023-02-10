@@ -4,6 +4,7 @@ function [] = PlotAllFiguresEmpSynth(genAll,meta,agentModelMeta)
 dur = agentModelMeta.dur;
 delay = agentModelMeta.delay;
 
+%plotFolder = [meta.syntheticPlotFold];
 plotFolder = string(meta.syntheticPlotFold);
 
 for ii = 1:numel(dur)
@@ -18,8 +19,9 @@ for ii = 1:numel(dur)
         k = 1;tic;
         for g = 1:numel(genAll)
             gen = genAll{g};
-            fName = strcat('RT_run',gen,'_',meta.d,meta.ext,cond,'_flies.mat');
+            fName = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
             load(strcat(string(meta.syntheticFlyFold),fName),'f_orco','synth_orco')
+            %load([meta.syntheticFlyFold fName],'f_orco','synth_orco')
             
             f_orco.id = [f_orco.id ' dur=' num2str(currDur) ', delay=' num2str(currDelay)];
             synth_orco.id = [synth_orco.id ' dur=' num2str(currDur) ', delay=' num2str(currDelay)];
@@ -98,6 +100,7 @@ for ii = 1:numel(dur)
             fNum = get(gcf,'Number')+1;
             printFigures(fNum,[plotFolder 'XY tracks/'],['EmpSynth_' f_orco.id '_tracksByAttaction'])
         end
+        close all
         fprintf('Finished plotting trajectories in %d seconds\n',round(toc))
         
         
@@ -310,7 +313,7 @@ for g = 1:numel(f_orcoAll)
     title({currEmpSynth{i}.id, ' During'})
     
     if k==1
-        subplot(6,4,k);legend([p{1}.mainLine p{2}.mainLine p_border],{'emp Head','synth'})
+        subplot(6,4,k);legend([p{1}.mainLine p{2}.mainLine p_border],{'emp Head','synth','border'})
     end
     
     k = k+2;
