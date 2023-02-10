@@ -69,45 +69,49 @@ xlabel('radial position');ylabel('Turn density diff');
 title(genAll{1})
 fNum = fNum+1;
 
-figure(fNum);set(gcf,'Position',[2 42 838 924])
-md1 = fitlm(sum(posDiffPosOnly,2),D);
-subplot(3,2,1);h = plot(md1);h(1).Marker = 'o';
-xlim([0.1 0.6]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
-xlabel('total positive pos diff');ylabel('Correlation')
+if numel(D)>3
+    figure(fNum);set(gcf,'Position',[2 42 838 924])
+    md1 = fitlm(sum(posDiffPosOnly,2),D);
+    subplot(3,2,1);h = plot(md1);h(1).Marker = 'o';
+    xlim([0.1 0.6]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
+    xlabel('total positive pos diff');ylabel('Correlation')
 
-md1 = fitlm(sum(turnDiffPosOnly,2),D);
-subplot(3,2,2);h = plot(md1);h(1).Marker = 'o';
-xlim([0.1 0.35]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
-xlabel('total positive turn diff');ylabel('Correlation')
+    md1 = fitlm(sum(turnDiffPosOnly,2),D);
+    subplot(3,2,2);h = plot(md1);h(1).Marker = 'o';
+    xlim([0.1 0.35]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
+    xlabel('total positive turn diff');ylabel('Correlation')
 
-md1 = fitlm(max(posDiffPosOnly,[],2),D);
-subplot(3,2,3);h = plot(md1);h(1).Marker = 'o';
-xlim([0 0.2]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
-xlabel('max positive pos diff');ylabel('Correlation')
+    md1 = fitlm(max(posDiffPosOnly,[],2),D);
+    subplot(3,2,3);h = plot(md1);h(1).Marker = 'o';
+    xlim([0 0.2]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
+    xlabel('max positive pos diff');ylabel('Correlation')
 
-md1 = fitlm(max(turnDiffPosOnly,[],2),D);
-subplot(3,2,4);h = plot(md1);h(1).Marker = 'o';
-xlim([0 0.15]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
-xlabel('max positive turn diff');ylabel('Correlation')
+    md1 = fitlm(max(turnDiffPosOnly,[],2),D);
+    subplot(3,2,4);h = plot(md1);h(1).Marker = 'o';
+    xlim([0 0.15]);ylim([0 1]);title(['r-sq=' num2str(md1.Rsquared.Ordinary) ', p=' num2str(md1.coefTest)])
+    xlabel('max positive turn diff');ylabel('Correlation')
 
-pd1 = fitdist(D,'kernel');
-y = 0:0.1:1;
-xLeft = -pdf(pd1,y);
-xRight = pdf(pd1,y);
-x = pdf(pd1,D).*(rand(size(D))-0.5);
+    pd1 = fitdist(D,'kernel');
+    y = 0:0.1:1;
+    xLeft = -pdf(pd1,y);
+    xRight = pdf(pd1,y);
+    x = pdf(pd1,D).*(rand(size(D))-0.5);
 
-subplot(3,2,5);scatter(x,D);hold on;
-plot(xLeft,y,'Color','r','LineStyle','-')
-plot(xRight,y,'Color','r','LineStyle','-')
-ylabel('correlation')
-subplot(3,2,6);bar(0,mean(D),'w');hold on
-er = errorbar(0,mean(D),std(D),std(D));    
-er.Color = [0 0 0];                            
-er.LineStyle = 'none';
-scatter(x./2,D,'');
-ylabel('correlation')
-hold off
-fNum = fNum+1;
+    subplot(3,2,5);scatter(x,D);hold on;
+    plot(xLeft,y,'Color','r','LineStyle','-')
+    plot(xRight,y,'Color','r','LineStyle','-')
+    ylabel('correlation')
+    subplot(3,2,6);bar(0,mean(D),'w');hold on
+    er = errorbar(0,mean(D),std(D),std(D));    
+    er.Color = [0 0 0];                            
+    er.LineStyle = 'none';
+    scatter(x./2,D,'');
+    ylabel('correlation')
+    hold off
+    fNum = fNum+1;
+else
+    disp('Not enough genotypes for correlation analysis.')
+end
 
 
 end

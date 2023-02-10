@@ -27,7 +27,7 @@ for g = 1:numel(genAll)
                 % set up synthetic fly model parameters
                 params.fs = f_orco.fs;%30 hz
                 params.len = f_orco.nPt;%1080;
-                params.totFly = 10;
+                params.totFly = 15;
                 params.posInit = [];
                 params.border = meta.border./meta.rBound;
                 params.lightOnTime = ceil(params.len./2);%540;% time of light on
@@ -36,7 +36,7 @@ for g = 1:numel(genAll)
                 params.LLFfs = LLFfs;
                 params.delay = currDelay;
                 params.dur = currDur;
-                nIt = 1;
+                nIt = 10;
                 params.baseLineFR = f_orco.spk(1);
                 
                 %RunAndTumbleFinal032722(f_orco,params);

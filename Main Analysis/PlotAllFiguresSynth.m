@@ -3,7 +3,7 @@ function PlotAllFiguresSynth(genAll,meta,currDelay,currDur)
 cond = ['_CWdur' strrep(num2str(currDur),'.','') ...
                 '_CWdelay' strrep(num2str(currDelay),'.','')];
 
-plotFolder = [meta.syntheticPlotFold];
+plotFolder = char(meta.syntheticPlotFold);
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% plotting general analysis figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13,8 +13,10 @@ f_orcoAll = cell(1,numel(genAll));
 for i = 1:numel(genAll)
     gen = genAll{i};
     fName = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
+    %fName = ['RT_run' gen '_' meta.d meta.ext cond '_flies.mat'];
     try
-        load([meta.syntheticFlyFold fName],'synth_orco')
+        load(strcat(string(meta.syntheticFlyFold),fName),'synth_orco')
+        %load([meta.syntheticFlyFold fName],'synth_orco')
         f_orcoAll{i} = synth_orco;
     catch
         f_orcoAll{i} = [];

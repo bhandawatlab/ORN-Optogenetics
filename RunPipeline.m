@@ -23,16 +23,15 @@ Destination_path = [pwd '\' EXP_folder];
 
 % set genotypes
 gen_Retinal = {'Orco Retinal'};
-    
 % ,'Ir8a Retinal','Orco Ir8a Retinal',...
 %     'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal',...
 %     'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
-%     'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal','Ir64a Ir75a Or42b New Retinal'};
+%     'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal'};
 gen_Control = {'Orco Control'};
 % ,'Ir8a Control','Orco Ir8a Control',...
 %     'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control',...
 %     'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
-%     'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control','Ir64a Ir75a Or42b Control'};
+%     'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control'};
 genAll = reshape([gen_Retinal;gen_Control],[],1);
 
 %% generate consolidated data file from individual tracked data files
@@ -60,7 +59,7 @@ label = 'Head';
 GenerateLightIntensity(label,meta);
 
 %% get the spiking data
-GenerateSpikingData(meta);
+GenerateSpikingData(genAll,meta);
 
 %% generate the empirical fly object
 GenerateEmpiricalFlies(genAll,meta);
@@ -79,12 +78,11 @@ transitionOnly = false;
 % kinematics linear filters when entering and leaving the light border
 [~,~,~,~] = linearFilterAnalysisSpeedCurvature(f_orco,meta,plotFigure);
 linearFilterAnalysisSpeedCurvatureAllTime(f_orco,meta);
-
-%All Clear
+close all
 
 %% generate synthetic flies
 agentModelMeta.delay = 0;% time since peak of filter
-agentModelMeta.dur = [0];% duration of crossing filters%2
+agentModelMeta.dur = 2;% duration of crossing filters%2
 if meta.adaptation == true
     agentModelHandle(gen_Retinal,meta,agentModelMeta,true)
 else
@@ -92,17 +90,19 @@ else
 end
 
 %% plot empirical synthetic comparisons
-%PlotAllFiguresSynth(gen_Retinal,meta,agentModelMeta.delay,agentModelMeta.dur);
+PlotAllFiguresSynth(gen_Retinal,meta,agentModelMeta.delay,agentModelMeta.dur);
 PlotAllFiguresEmpSynth(gen_Retinal,meta,agentModelMeta);
 
 %% plot rules of summation analysis
-gen = gen_Retinal{1};%'Orco Retinal'
+gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
+    'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal',...
+    'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
+    'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal','Ir64a Ir75a Or42b New Retinal'};
+gen_Control = {'Orco Control','Ir8a Control','Orco Ir8a Control',...
+    'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control',...
+    'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
+    'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control','Ir64a Ir75a Or42b Control'};
 rulesOfSummationAnalysis(gen_Retinal,meta)
-
-%% svd analysis
-load([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');%_allTime
-figureFile = 'StateSpaceEmbeddingDimensionsFNN_200msDelay';
-SVD_embeddingAnalysis(f_orco,meta,figureFile);
 
 
 

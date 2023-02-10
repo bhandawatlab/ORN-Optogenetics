@@ -24,7 +24,7 @@ Intensity_spaceN = interp1(x,Intensity_space,xN);
 dirinfo = dir(string(meta.folderData));
 subdirinfo = cell(1,length(dirinfo)-2);
 for K = 1 : length(subdirinfo)
-    thisdir = dirinfo(K+2).name
+    thisdir = dirinfo(K+2).name;
     %[string(meta.folderData) '/' thisdir]
     subdirinfo{K} = dir(strcat(string(meta.folderData),'/',thisdir));
 end

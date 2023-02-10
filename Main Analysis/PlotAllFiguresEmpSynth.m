@@ -5,7 +5,7 @@ dur = agentModelMeta.dur;
 delay = agentModelMeta.delay;
 
 %plotFolder = [meta.syntheticPlotFold];
-plotFolder = string(meta.syntheticPlotFold);
+plotFolder = char(meta.syntheticPlotFold);
 
 for ii = 1:numel(dur)
     for jj = 1:numel(delay)
