@@ -1,10 +1,10 @@
 function [synth_orco,f_orco] = GenerateSyntheticFlies(fName, gen,meta,savefile)
-%C = strsplit(fName,'.');
-%fName2 = [C{1} '_flies.mat'];
+C = strsplit(fName,'.');
+fName2 = [C{1} '_flies.mat'];
 fpath = strcat(string(meta.syntheticFlyFold),fName);
 [synth_orco,f_orco] = getSyntheticFlies(fpath,gen,meta);
 if savefile
-    save(strcat(string(meta.syntheticFlyFold),fName),'synth_orco','f_orco','-v7.3');
+    save(strcat(string(meta.syntheticFlyFold),fName2),'synth_orco','f_orco','-v7.3');
 end
 
 end
