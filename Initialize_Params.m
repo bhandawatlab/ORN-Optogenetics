@@ -11,7 +11,7 @@ function [meta] = Initialize_Params(Destination_path)    % clc
     %disp(data)
     %A = csvread('Test.csv') %, 'columns', {'X, 'Y', 'Z'});
     %disp(A)
-    A = readcell(['Test.csv']); %textscan(fin,'%s','Delimiter','\n')
+    A = readcell(['Config.csv']); %textscan(fin,'%s','Delimiter','\n')
     B = string(A(:, 1));
 
     dateValIdx = find(B=='d');

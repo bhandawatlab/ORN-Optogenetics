@@ -21,7 +21,7 @@ for i = 1:numel(genAll)
     
     % use the head position files and ignore the body position files
     %if ~contains(s(i).name,'body','IgnoreCase',true)
-        load(strcat(string(meta.foldStim),'\',gen,'_Stim_Train'),'V2','V')
+        load(strcat(string(meta.foldStim),'\',gen,'_Stim_Train.mat'),'V2','V')
         maxV = max(V2(:));
         insideSS = calculateSS(maxV,bLFP,bSpkRate,fs_filter);
         baseline = calculateSS(0,bLFP,bSpkRate,fs_filter);
