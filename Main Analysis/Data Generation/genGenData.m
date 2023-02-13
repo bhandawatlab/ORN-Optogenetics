@@ -18,8 +18,10 @@ nGen = numel(genAll);
 currfiles = cell(1,nGen);
 genotype = struct('name',[],'files',[]);
 for i = 1:nGen
+    disp(i)
     gen = genAll{i};
     currfiles{i} = dir([dataFold '\' gen '\*.mat']);
+    length(currfiles{i})
     genotype.name{i} = gen;
     for j = 1:length(currfiles{i})
         genotype.files{i,j} = currfiles{i}(j).name;
@@ -30,7 +32,8 @@ end
 fly = cell(1,nGen);curvError = cell(1,nGen);xyError = cell(1,nGen);
 for i = 1 :nGen
     nFly = length(currfiles{i});
-    sAll = cell(1,nFly);sArenaAll = cell(1,nFly);
+    sAll = cell(1,nFly);
+    sArenaAll = cell(1,nFly);
     for j = 1:nFly
         fName = genotype.files{i,j};
         oldFolder = [dataFold '\' genotype.name{i}];
@@ -162,7 +165,7 @@ Error.curv = curvError{K};
 Error.xy = xyError{K};
 
 % save the data
-fileName  = [genFolder '\' gen.name '_' meta.d '.mat'];
+fileName  = [genFolder '\' gen.name '_' meta.d '.mat']
 if isfile(fileName)
      save(fileName,'Data','Arena','fs','Error','gen','-append','-v7.3');
 else

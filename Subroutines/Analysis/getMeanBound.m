@@ -32,6 +32,8 @@ for fly = 1:self.nFly
             durTmpBef = [durTmpBef tmpDur];
             phiTmpBef = [phiTmpBef mean(tmpPhi)];
         else
+            %disp("Here")
+            %disp(startNdx(track)<fe(fly))
             durTmp = [durTmp tmpDur];
             phiTmp = [phiTmp mean(tmpPhi)];
         end
@@ -49,8 +51,8 @@ pHat1 = [lognfit(abs(phiTmpBef)+eps); lognfit(durTmpBef+eps)];
 CorrMat2 = corrcoef([phiTmp;durTmp]');
 qBounds2 = [quantile(phiTmp,.05)  quantile(phiTmp,.95);
     quantile(durTmp,.05)  quantile(durTmp,.95)];
-pHat2 = [lognfit(abs(phiTmp)+eps); lognfit(durTmp+eps)];
 
+pHat2 = [lognfit(abs(phiTmp)+eps); lognfit(durTmp+eps)];
 self.model.boundary.state.state = 'boundary';
 self.model.boundary.corrBaseline = CorrMat1;
 self.model.boundary.corr = CorrMat2;
@@ -58,6 +60,5 @@ self.model.boundary.qBoundsBaseline = qBounds1;
 self.model.boundary.qBounds = qBounds2;
 self.model.boundary.baseline = pHat1;
 self.model.boundary.during = pHat2;
-
 
 end
