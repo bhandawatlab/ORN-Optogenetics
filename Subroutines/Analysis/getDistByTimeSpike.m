@@ -70,9 +70,9 @@ for stateN = 1:numel(self.states.key)
         self.model.TP.XX = XX;
         self.model.TP.YY = YY;
     catch
-%         self.model.TP.before(stateN,1:numel(newStateProbBaseline)) = nan(1,numel(newStateProbBaseline));
-%         self.model.TP.during(stateN,1:numel(newStateProb)) = [];
-%         self.model.TP.key = self.states.key;
+        self.model.TP.before(stateN,1:(numel(self.states.key)-1)) = nan(1,(numel(self.states.key)-1));
+        self.model.TP.during(stateN,1:(numel(self.states.key)-1)) = [];
+        self.model.TP.key = self.states.key;
 %         self.model.TP.XX = XX;
 %         self.model.TP.YY = YY;
     end

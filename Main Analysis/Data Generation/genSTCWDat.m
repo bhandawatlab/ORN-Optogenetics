@@ -30,7 +30,7 @@ for i = 1:nGen
         r = sqrt(Data.x(j,:).^2+Data.y(j,:).^2);
         % assign stops and boundary conditions
         stop = spd<meta.stopThresh;
-        boundary = r(:,1:end-1)>meta.rBound;
+        boundary = r(:,1:end-1)>(meta.rBound-0.15);% boundary if fly body is 1.5 mm (0.15 cm) away from the arena boundary
         stop(boundary) = false;
         
         % assign short (<3 frame) tracks not assigned to stop/boundary to

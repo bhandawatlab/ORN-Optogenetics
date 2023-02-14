@@ -72,6 +72,7 @@ if ~isempty(self.model)
         
         % early baseline after first entry
         x = stateDistEarly{ndx}.(kin);
+        x(isnan(x)) = [];
         if ~isempty(x)
             parmhat =  lognfit(x+eps);
         else
@@ -82,6 +83,7 @@ if ~isempty(self.model)
         
         % later baseline after first entry
         x = stateDistLate{ndx}.(kin);
+        x(isnan(x)) = [];
         if ~isempty(x)
             parmhat =  lognfit(x+eps);
         else
