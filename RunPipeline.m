@@ -56,7 +56,7 @@ if meta.dataFromRaw
     %--------------------------------------------------------------------------
     %--------------------------------------------------------------------------
     % generate Data Files (new Data) and Data Gen (consolidated Data by genotype)
-    disp('Generating new data files...')
+    disp('Generating new data files...');
     genGenData(genAll,meta);
     %--------------------------------------------------------------------------
 %     % findbest fit parameters to delineate between sharp turn and curved walks
@@ -64,7 +64,7 @@ if meta.dataFromRaw
 %     [GlobMinX,GlobMinCFit] = getBestFit(meta);
     %--------------------------------------------------------------------------
     % generate sharp turn/curved walk data
-    disp('Generating sharp turn curved walk data files...')
+    disp('Generating sharp turn curved walk data files...');
     load([Destination_path '/Data/BestFit5.mat'],'GlobMinX');
     genSTCWDat(genAll,meta,GlobMinX);
     %--------------------------------------------------------------------------
@@ -92,6 +92,7 @@ plotFigure = true;
 [~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
 transitionOnly = false;
 [~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
+
 % kinematics linear filters when entering and leaving the light border
 [~,~,~,~] = linearFilterAnalysisSpeedCurvature(f_orco,meta,plotFigure);
 linearFilterAnalysisSpeedCurvatureAllTime(f_orco,meta);

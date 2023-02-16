@@ -1,35 +1,39 @@
-d:March2022
-foldDataModel:'\DataModel'
-plotFold: '\Figures'
-foldRaw:'\Data\DataRaw'
-foldStim:'\Data\DataStim'
+#This is a Configuration for ORN-Optogenetics Data Analysis 
+Author: Tarun Pulluri
+Date: 15th Feb 2023
+
+d: March2022
+foldDataModel: '\DataModel'
+plotFold:  '\Figures'
+foldRaw: '\Data\DataRaw'
+foldStim: '\Data\DataStim'
 folderData: '\Data\DataGen'
 foldSpk: '\Data\DataSpike'
-LFPFilterFile:'\Data\LFP_2_25.mat'
-RateFilterFile:'\Data\LFP2Rate_4_12.mat'
-Intensity2VoltageFile:'\Data\Intensity_space2.mat'
-spikingDataFile:'\Data\empdataNew.mat'
-trainingDataFolder:'\Data\Training Data\'
-syntheticFlyFold:'\DataRT\'
-syntheticPlotFold:'\Figures\EmpSynth\'
-summationModelFold:'\Data\SummationModel\'
-calibrationFolder:'\Data\Calibration'
-calibrationFile:'\LIR_exp_1.xlsx'
-fs_linFilter:100
-border:1.25
-fs:30
-stopThresh:0.5
-rBound:4
-timeInterval:0:200
-States2Plot_Inh:1:4
-States2Plot_KNN:1:8
-States2Plot_Opt:1:3
-xGrid:-150:15:150
-yGrid:0:1:55
-saveData:1
-adaptation:0
-plotFig:0
-plotSupplements:0
-dataFromRaw:1
+LFPFilterFile: '\Data\LFP_2_25.mat'
+RateFilterFile: '\Data\LFP2Rate_4_12.mat'
+Intensity2VoltageFile: '\Data\Intensity_space2.mat'
+spikingDataFile: '\Data\empdataNew.mat'
+trainingDataFolder: '\Data\Training Data\'
+syntheticFlyFold: '\DataRT\'
+syntheticPlotFold: '\Figures\EmpSynth\'
+summationModelFold: '\Data\SummationModel\'
+calibrationFolder: '\Data\Calibration'
+calibrationFile: '\LIR_exp_1.xlsx'
+fs_linFilter: 100
+border: 1.25
+fs: 30
+stopThresh: 0.5
+rBound: 4
+timeInterval: 0:200
+States2Plot_Inh: 1:4
+States2Plot_KNN: 1:8
+States2Plot_Opt: 1:3
+xGrid: -150:15:150
+yGrid: 0:1:55
+saveData: 1
+adaptation: 0
+plotFig: 0
+plotSupplements: 0
+dataFromRaw: 1
 
 

@@ -121,12 +121,11 @@ function ps2pdf(varargin)
    s = 0; %#ok<NASGU>
    r = ''; %#ok<NASGU>
    % run GhostScript to convert the file
-   disp("Here")
-   disp(strcat(string(gsData.cmd),' @"',string(gsData.responseFile),'" "',string(gsData.psFile),'"'))
+   %disp(strcat(string(gsData.cmd),' @"',string(gsData.responseFile),'" "',string(gsData.psFile),'"'))
    if gsData.useBuiltin 
       [s, r] = gsData.cmd(['@' gsData.responseFile], gsData.psFile, gsDebug);
    else 
-      [s, r] = system(strcat(string(gsData.cmd),' @"',string(gsData.responseFile),'" "',string(gsData.psFile),'"'))
+      [s, r] = system(strcat(string(gsData.cmd),' @"',string(gsData.responseFile),'" "',string(gsData.psFile),'"'));
       %[gsData.cmd ' @"' gsData.responseFile '" "' gsData.psFile '"']);
    end
    if gsData.verbose
