@@ -32,6 +32,7 @@ for fitN = 1:numel(optFitN_all)
     b2 = b(:,optFitN_all(fitN));
     % apply the filter to the data and reshape to nTrials x nPts matrix
     turnProb_fit = XStimNew*b2;
+    turnProb_fit(turnProb_fit<0) = 0;
     
     b_broken = reshape(b2(2:end),[],numel(stim_all));
     

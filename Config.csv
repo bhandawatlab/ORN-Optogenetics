@@ -1,5 +1,5 @@
 #This is a Configuration for ORN-Optogenetics Data Analysis 
-Author: Tarun Pulluri
+Author: Liangyu
 Date: 15th Feb 2023
 
 d: March2022
@@ -33,7 +33,5 @@ yGrid: 0:1:55
 saveData: 1
 adaptation: 0
 plotFig: 0
-plotSupplements: 0
-dataFromRaw: 1
-
-
+plotSupplements: 1
+dataFromRaw: 0

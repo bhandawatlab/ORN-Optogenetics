@@ -62,7 +62,7 @@ if type == 2
     hold on
     plot(x,Intensity,'r')
     hold off
-    xlabel('Distance (mm)')
+    xlabel('Distance (cm)')
     ylabel('mW/cm^2')
     ylim([0 max(Intensity)*1.1])
     legend({'Modeled','Measured'})

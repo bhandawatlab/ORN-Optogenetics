@@ -35,28 +35,28 @@ yl = 'degrees/s';
 [~,~,~,~,curv_leaving,curv_entering,curv_leaving_std,curv_entering_std] = ...
     getDf_aligned_kinematics(f_orco,thresh,delay+buffer,yl,'curv',false,plotFigure);
 
-delay = 4*fs;
-curv_leaving = resample(curv_leaving,fs,f_orco.fs);
+delay = floor(delay.*fs./f_orco.fs);
+curv_leaving = resample(padarray(curv_leaving,[0 5],'replicate'),fs,f_orco.fs);
 curv_leaving = curv_leaving((ceil(end./2)-delay):(ceil(end./2)+delay));
-curv_entering = resample(curv_entering,fs,f_orco.fs);
+curv_entering = resample(padarray(curv_entering,[0 5],'replicate'),fs,f_orco.fs);
 curv_entering = curv_entering((ceil(end./2)-delay):(ceil(end./2)+delay));
-spd_leaving = resample(spd_leaving,fs,f_orco.fs);
+spd_leaving = resample(padarray(spd_leaving,[0 5],'replicate'),fs,f_orco.fs);
 spd_leaving = spd_leaving((ceil(end./2)-delay):(ceil(end./2)+delay));
-spd_entering = resample(spd_entering,fs,f_orco.fs);
+spd_entering = resample(padarray(spd_entering,[0 5],'replicate'),fs,f_orco.fs);
 spd_entering = spd_entering((ceil(end./2)-delay):(ceil(end./2)+delay));
 
-curv_leaving_std = resample(curv_leaving_std,fs,f_orco.fs);
+curv_leaving_std = resample(padarray(curv_leaving_std,[0 5],'replicate'),fs,f_orco.fs);
 curv_leaving_std = curv_leaving_std((ceil(end./2)-delay):(ceil(end./2)+delay));
-curv_entering_std = resample(curv_entering_std,fs,f_orco.fs);
+curv_entering_std = resample(padarray(curv_entering_std,[0 5],'replicate'),fs,f_orco.fs);
 curv_entering_std = curv_entering_std((ceil(end./2)-delay):(ceil(end./2)+delay));
-spd_leaving_std = resample(spd_leaving_std,fs,f_orco.fs);
+spd_leaving_std = resample(padarray(spd_leaving_std,[0 5],'replicate'),fs,f_orco.fs);
 spd_leaving_std = spd_leaving_std((ceil(end./2)-delay):(ceil(end./2)+delay));
-spd_entering_std = resample(spd_entering_std,fs,f_orco.fs);
+spd_entering_std = resample(padarray(spd_entering_std,[0 5],'replicate'),fs,f_orco.fs);
 spd_entering_std = spd_entering_std((ceil(end./2)-delay):(ceil(end./2)+delay));
 
-f_leaving_all = resample(f_leaving_all,fs,f_orco.fs);
+f_leaving_all = resample(padarray(f_leaving_all,[0 5],'replicate'),fs,f_orco.fs);
 f_leaving_all = f_leaving_all((ceil(end./2)-delay):(ceil(end./2)+delay));
-f_entering_all = resample(f_entering_all,fs,f_orco.fs);
+f_entering_all = resample(padarray(f_entering_all,[0 5],'replicate'),fs,f_orco.fs);
 f_entering_all = f_entering_all((ceil(end./2)-delay):(ceil(end./2)+delay));
 
 
@@ -162,11 +162,15 @@ end
 % % 
 % 
 if plotFigure
+    psFileName = strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFile,'.ps');
+    if exist(psFileName, 'file')==2
+      delete(psFileName);
+    end
     for f = 1:get(gcf,'Number')
         figure(f);
-        print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFile,'.ps'),'-loose','-append');
+        print('-painters','-dpsc2',psFileName,'-loose','-append');
     end
-    ps2pdf('psfile', strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFile,'.ps'), 'pdffile', ...
+    ps2pdf('psfile', psFileName, 'pdffile', ...
     strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...

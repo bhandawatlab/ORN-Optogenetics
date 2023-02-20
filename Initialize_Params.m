@@ -5,12 +5,18 @@ function [meta] = Initialize_Params(Destination_path)    % clc
     % if ~exist(Dataset, 'dir')
     %         mkdir(Dataset);
     % end
+    addpath(genpath([pwd '/Util']))
+    addpath(genpath([pwd '/Subroutines']))
+    addpath(genpath([pwd '/Main Analysis']))
+    addpath(genpath([pwd '/PlottingFunctions']))
+    addpath(genpath([pwd '/Model']))
 
     
     %fin = fopen('Test.xlsx');
     %disp(data)
     %A = csvread('Test.csv') %, 'columns', {'X, 'Y', 'Z'});
     %disp(A)
+    copyfile('Config.csv', [Destination_path '\' 'Config.csv']);
     A = readcell(['Config.csv']); %textscan(fin,'%s','Delimiter','\n')
     B = string(A(:, 1));
 

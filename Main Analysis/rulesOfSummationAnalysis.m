@@ -22,7 +22,7 @@ lab = [{'Orco','Ir8a','OrcoIr8a','Orco','Ir8a'};
     {'Before','Before','Before','',''}];
 labCov = [{'Orco'};{'Ir8a'}];
 gen2Cons = {'Orco Retinal', 'Ir8a Retinal','Orco Ir8a Retinal'};
-if ~exist([meta.summationModelFold 'OrcoIr8aCombination.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'OrcoIr8aCombination.mat'],'file')==2)
     try
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
         [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
@@ -39,7 +39,7 @@ lab = [{'Or42b','Or92a','Or42bOr92a','Or42b','Or92a'};
     {'Before','Before','Before','',''}];
 labCov = [{'Or42b'};{'Or92a'}];
 gen2Cons = {'Or42b Retinal', 'Or92a Retinal','Or42b Or92a Retinal'};
-if ~exist([meta.summationModelFold 'Or42bOr92aCombination.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'Or42bOr92aCombination.mat'],'file')==2)
     try
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
         [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
@@ -55,7 +55,7 @@ end
 lab = [{'Ir64a','Ir75a','Ir64aIr75a','Ir64a','Ir75a'};
     {'Before','Before','Before','',''}];
 labCov = [{'Ir64a'};{'Ir75a'}];
-if ~exist([meta.summationModelFold 'Ir64aIr75aCombination.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'Ir64aIr75aCombination.mat'],'file')==2)
     try
         gen2Cons = {'Ir64a Retinal', 'Ir75a Retinal','Ir64a Ir75a Retinal'};
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
@@ -73,7 +73,7 @@ lab = [{'Or42b','Ir64a','Or42bIr64a','Or42b','Ir64a'};
     {'Before','Before','Before','',''}];
 labCov = [{'Or42b'};{'Ir64a'}];
 gen2Cons = {'Or42b Retinal', 'Ir64a Retinal','Ir64a Or42b Retinal'};
-if ~exist([meta.summationModelFold 'Or42bIr64aCombination.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'Or42bIr64aCombination.mat'],'file')==2)
     try
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
         [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
@@ -90,7 +90,7 @@ lab = [{'Or42b','Ir64aIr75a','Ir64aIr75aOr42b','Or42b','Ir64aIr75a'};
     {'Before','Before','Before','',''}];
 labCov = [{'Or42b'};{'Ir64aIr75a'}];
 gen2Cons = {'Or42b Retinal', 'Ir64a Ir75a Retinal','Ir64a Ir75a Or42b Retinal'};
-if ~exist([meta.summationModelFold 'Ir64aIr75aOr42bCombination.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'Ir64aIr75aOr42bCombination.mat'],'file')==2)
     try
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
         [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
@@ -107,7 +107,7 @@ lab = [{'Ir75a','Ir64aOr42b','Ir64aIr75aOr42b','Ir75a','Ir64aOr42b'};
     {'Before','Before','Before','',''}];
 labCov = [{'Ir75a'};{'Ir64aOr42b'}];
 gen2Cons = {'Ir75a Retinal', 'Ir64a Or42b Retinal','Ir64a Ir75a Or42b Retinal'};
-if ~exist([meta.summationModelFold 'Ir64aIr75aOr42bCombination2.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'Ir64aIr75aOr42bCombination2.mat'],'file')==2)
     try
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
         [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...
@@ -124,7 +124,7 @@ lab = [{'Or42a','Or42bOr92a','Or42aOr42bOr92a','Or42a','Or42bOr92a'};
     {'Before','Before','Before','',''}];
 labCov = [{'Or42a'};{'Or42bOr92a'}];
 gen2Cons = {'Or42a Retinal', 'Or42b Or92a Retinal','Or42a Or42b Or92a Retinal'};
-if ~exist([meta.summationModelFold 'Or42aOr42bOr92aCombination.mat'],'file')==2
+if ~(exist([meta.summationModelFold 'Or42aOr42bOr92aCombination.mat'],'file')==2)
     try
         Gen2Cons = cellfun(@(x) find(strcmpi(genAll,x)),gen2Cons);tic;
         [allMedBestFit,allPci_95,allPci_99] = getBestParameters(f_orco,stateKinAll,...

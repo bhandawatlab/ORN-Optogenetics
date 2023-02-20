@@ -19,7 +19,7 @@ if plotFigure
         mkdir(strcat(string(meta.plotFold),'/LinearFilterAnalysis/'))
     end
 end
-meta.delay = 15*30;
+meta.delay = 10*30;
 meta.buffer = 1*30;
 meta.stNdx = find(strcmpi(f_orco.states.key  ,'sharp turns'));
 
@@ -47,27 +47,29 @@ thresh = 15;
 if plotFigure
     for i = 1:6
         subplot(3,2,i);
-        xlim([-15 15])
+        xlim([-10 10])
     end
 end
-fs = 100;
-turnProb_leaving = resample(turnProb_leaving,fs,f_orco.fs);
-turnProb_leaving = turnProb_leaving((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
-turnProb_entering = resample(turnProb_entering,fs,f_orco.fs);
-turnProb_entering = turnProb_entering((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
-turnProb_leaving_std = resample(turnProb_leaving_std,fs,f_orco.fs);
-turnProb_leaving_std = turnProb_leaving_std((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
-turnProb_entering_std = resample(turnProb_entering_std,fs,f_orco.fs);
-turnProb_entering_std = turnProb_entering_std((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
 
-df_leaving_all = resample(df_leaving_all,fs,f_orco.fs);
-df_leaving_all = df_leaving_all((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
-df_entering_all = resample(df_entering_all,fs,f_orco.fs);
-df_entering_all = df_entering_all((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
-f_leaving_all = resample(f_leaving_all,fs,f_orco.fs);
-f_leaving_all = f_leaving_all((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
-f_entering_all = resample(f_entering_all,fs,f_orco.fs);
-f_entering_all = f_entering_all((ceil(end./2)-meta.delay):(ceil(end./2)+meta.delay));
+fs = 100;
+newDelay = floor(meta.delay.*fs./f_orco.fs);
+turnProb_leaving = resample(padarray(turnProb_leaving,[0 5],'replicate'),fs,f_orco.fs);
+turnProb_leaving = turnProb_leaving((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+turnProb_entering = resample(padarray(turnProb_entering,[0 5],'replicate'),fs,f_orco.fs);
+turnProb_entering = turnProb_entering((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+turnProb_leaving_std = resample(padarray(turnProb_leaving_std,[0 5],'replicate'),fs,f_orco.fs);
+turnProb_leaving_std = turnProb_leaving_std((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+turnProb_entering_std = resample(padarray(turnProb_entering_std,[0 5],'replicate'),fs,f_orco.fs);
+turnProb_entering_std = turnProb_entering_std((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+
+df_leaving_all = resample(padarray(df_leaving_all,[0 5],'replicate'),fs,f_orco.fs);
+df_leaving_all = df_leaving_all((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+df_entering_all = resample(padarray(df_entering_all,[0 5],'replicate'),fs,f_orco.fs);
+df_entering_all = df_entering_all((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+f_leaving_all = resample(padarray(f_leaving_all,[0 5],'replicate'),fs,f_orco.fs);
+f_leaving_all = f_leaving_all((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
+f_entering_all = resample(padarray(f_entering_all,[0 5],'replicate'),fs,f_orco.fs);
+f_entering_all = f_entering_all((ceil(end./2)-newDelay):(ceil(end./2)+newDelay));
 
 
 factors_leave_all = {df_leaving_all',df_entering_all',f_leaving_all',...
@@ -84,7 +86,7 @@ if plotFigure
     figure;set(gcf,'Position',[2 42 838 924]);
     for i = 1:numel(factors_leave_all)
         subplot(3,2,i);
-        [~,yhat(i,:)] = getLogisticRegression(factors_leave_all{i},turn_prob_all{i},turn_prob_std_all{i},meta.delay);
+        [~,yhat(i,:)] = getLogisticRegression(factors_leave_all{i},turn_prob_all{i},turn_prob_std_all{i},newDelay,fs);
         xlabel('meta.delay');ylabel(yl);
         title( title_id{i})
     end
@@ -92,39 +94,43 @@ end
 
 %% generate linear filters
 % leaving
-turnProb = turnProb_leaving(meta.delay+1:end)';
-turnProb_std = turnProb_leaving_std(meta.delay+1:end)';
+turnProb = turnProb_leaving(newDelay+1:end)';
+turnProb_std = turnProb_leaving_std(newDelay+1:end)';
 ntfilt = 2*fs;
 nthist = 2*fs;
 
 % firing rate filter
 stim_all = {f_leaving_all};filter_type = {'firing rate filter'};
-[U,s,V,XStimNew] = getSVD(stim_all,ntfilt,nthist,meta.delay);
-b_leave = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,meta.delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+[U,s,V,XStimNew] = getSVD(stim_all,ntfilt,nthist,newDelay);
+b_leave = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,newDelay,yl,14,U,s,V,XStimNew,fs,plotFigure);
 if plotFigure
     sgtitle('Leaving')
 end
 
 % entering
-turnProb = turnProb_entering(meta.delay+1:end)';
-turnProb_std = turnProb_entering_std(meta.delay+1:end)';
+turnProb = turnProb_entering(newDelay+1:end)';
+turnProb_std = turnProb_entering_std(newDelay+1:end)';
 ntfilt = 2*fs;
 nthist = 2*fs;
 
 % firing rate filter
 stim_all = {f_entering_all};filter_type = {'firing rate filter'};
-[U,s,V,XStimNew] = getSVD(stim_all,ntfilt,nthist,meta.delay);
-b_enter = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,meta.delay,yl,14,U,s,V,XStimNew,fs,plotFigure);
+[U,s,V,XStimNew] = getSVD(stim_all,ntfilt,nthist,newDelay);
+b_enter = generateLinearFilter_KinTurnProb(stim_all,turnProb,turnProb_std,ntfilt,filter_type,newDelay,yl,14,U,s,V,XStimNew,fs,plotFigure);
 if plotFigure
     sgtitle('Entering')
 end
 
 if plotFigure
+    psFileName = strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.ps');
+    if exist(psFileName, 'file')==2
+      delete(psFileName);
+    end
     for f = 1:get(gcf,'Number')
         figure(f);
-        print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.ps'),'-loose','-append');
+        print('-painters','-dpsc2',psFileName,'-loose','-append');
     end
-    ps2pdf('psfile', strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.ps'), 'pdffile', ...
+    ps2pdf('psfile', psFileName, 'pdffile', ...
     strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
@@ -265,7 +271,7 @@ if plotFigure
     xlabel('meta.delay (s)');ylabel('delta firing rate (spikes/s^2)');
     
     
-    print('-painters','-dpdf',strcat(string(meta.plotFold),'/LinearFilterAnalysis/STA_sharpTurnAnalysis.pdf'));
+    %print('-painters','-dpdf',strcat(string(meta.plotFold),'/LinearFilterAnalysis/STA_sharpTurnAnalysis.pdf'));
 end
 end
 

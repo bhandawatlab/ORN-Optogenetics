@@ -35,6 +35,14 @@ fAllfly = [];
 b_curv = cell(f_orco.nFly,1);
 b_spd = cell(f_orco.nFly,1);
 filter_type = {'single fly filter'};
+curvPSFileName = strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFileCurv,'.ps');
+if exist(curvPSFileName, 'file')==2
+    delete(curvPSFileName);
+end
+spdPSFileName = strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.ps');
+if exist(spdPSFileName, 'file')==2
+    delete(spdPSFileName);
+end
 for fly = 1:f_orco.nFly
     curv = abs(f_orco.curv(fly,fe(fly):end)).*180./pi.*f_orco.fs;
     curv = smooth(curv,'moving',0.2*f_orco.fs);
@@ -48,18 +56,20 @@ for fly = 1:f_orco.nFly
     try
         b_curv{fly} = generateLinearFilter_KinAllTime({f},curv,...
             zeros(size(curv)),ntfilt,filter_type,yl,14,U,s,V,XStimNew,f_orco.fs);%delay
+        sgtitle(['Fly ' num2str(fly)]);
     catch
         figure;title(['Not enough data for fly ' num2str(fly)]);
     end
-    print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFileCurv,'.ps'),'-loose','-append');
+    print('-painters','-dpsc2',curvPSFileName,'-loose','-append');
     yl = 'mm/s';
     try
         b_spd{fly} = generateLinearFilter_KinAllTime({f},currSpd,...
             zeros(size(currSpd)),ntfilt,filter_type,yl,14,U,s,V,XStimNew,f_orco.fs);%delay
+        sgtitle(['Fly ' num2str(fly)]);
     catch
         figure;title(['Not enough data for fly ' num2str(fly)]);
     end
-    print('-painters','-dpsc2',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.ps'),'-loose','-append');
+    print('-painters','-dpsc2',spdPSFileName,'-loose','-append');
     
     XStimAllFly = [XStimAllFly;XStimNew];
     curvAllfly = [curvAllfly;curv];
@@ -67,12 +77,12 @@ for fly = 1:f_orco.nFly
     fAllfly = [fAllfly,f];
 end
 
-ps2pdf('psfile',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileCurv,'.ps'), 'pdffile', ...
+ps2pdf('psfile',curvPSFileName, 'pdffile', ...
     strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileCurv,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
     'gslibpath','C:\Program Files\gs\gs9.50\lib');
-ps2pdf('psfile',strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.ps'), 'pdffile', ...
+ps2pdf('psfile',spdPSFileName, 'pdffile', ...
     strcat(string(meta.plotFold),'/LinearFilterAnalysis/',figureFileSpd,'.pdf'), 'gspapersize', 'letter',...
     'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
     'gsfontpath','C:\Program Files\gs\gs9.50\lib',...

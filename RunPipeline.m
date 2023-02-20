@@ -1,8 +1,9 @@
 clear all;
 close all hidden
-addpath(genpath(pwd));
 prompt = "Using Existing Experimental Data, Y or N:";
 txt = input(prompt,"s");
+
+%Initialization
 if txt =="Y"
     prompt = "Enter Destination File Path:";
     Destination_path = input(prompt,"s");
@@ -26,27 +27,17 @@ else
 
     Destination_path = [pwd '\' EXP_folder];
     [meta] = Initialize_Params(Destination_path);
-    
 end
-%Initialization
-
-% %%
-% adaptation = false;
-% plotFig = false;
-% plotSupplements = true;
-% [meta] = setupMetaInfo(adaptation,plotFig,plotSupplements);
 
 % set genotypes
-gen_Retinal = {'Or7a Retinal'};
-% 'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
-%     'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal',...
-%     'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
-%     'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal'};
-gen_Control = {'Or7a Control'};
-% 'Orco Control' ,'Ir8a Control','Orco Ir8a Control',...
-%     'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control',...
-%     'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
-%     'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control'};
+gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal',...
+    'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal',...
+    'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
+    'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal'};
+gen_Control = {'Orco Control','Ir8a Control','Orco Ir8a Control',...
+    'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control',...
+    'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
+    'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control'};
 genAll = reshape([gen_Retinal;gen_Control],[],1);
 
 %% generate consolidated data file from individual tracked data files
@@ -85,39 +76,56 @@ GenerateEmpiricalFlies(genAll,meta);
 PlotAllFiguresEmp(genAll,gen_Retinal,meta)
 
 %% ORN to speed/curv linear filter analysis
-gen = gen_Retinal{1};
-load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
+gen = gen_Retinal{1};%'Orco Retinal'
+load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');%_allTime
 transitionOnly = true;
 plotFigure = true;
-[~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
+tic;[~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);toc;
 transitionOnly = false;
-[~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);
-
+tic;[~,~] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionOnly,meta,plotFigure);toc;
 % kinematics linear filters when entering and leaving the light border
 [~,~,~,~] = linearFilterAnalysisSpeedCurvature(f_orco,meta,plotFigure);
 linearFilterAnalysisSpeedCurvatureAllTime(f_orco,meta);
+linearFilterStateKinematics(gen_Retinal{1},meta);
 close all
 
 %% generate synthetic flies
 agentModelMeta.delay = 0; %time since peak of filter
 agentModelMeta.dur = 0; %duration of crossing filters%2
 if meta.adaptation == true
+    % generate synthetic flies
     agentModelHandle(gen_Retinal,meta,agentModelMeta,true)
+    % get the time averaged KNN space of these synthetic flies
+    meta2 = meta;
+    meta2.adaptation = false;
+    meta2.tSlice = 0;
+    meta2.tSlice2 = 0;
+    meta2.zGrid = [0 180].*meta.fs;
+    meta2.ratio = [30, 10, 1000.*meta.fs];
+    meta2.ext = '_allTime';
+    meta2.foldName = 'TimeAveraged/';
+    agentModelHandle(gen_Retinal,meta2,agentModelMeta,false)
+    PlotAllFiguresSynth(gen_Retinal,meta2,agentModelMeta.delay,agentModelMeta.dur(1));
 else
     agentModelHandle(gen_Retinal,meta,agentModelMeta,true)
 end
 
 %% plot empirical synthetic comparisons
-PlotAllFiguresSynth(gen_Retinal,meta,agentModelMeta.delay,agentModelMeta.dur);
+PlotAllFiguresSynth(gen_Retinal,meta,agentModelMeta.delay,agentModelMeta.dur(1));
 PlotAllFiguresEmpSynth(gen_Retinal,meta,agentModelMeta);
 
 %% plot rules of summation analysis
-gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal', ...
-    'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal', ...
-    'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
-    'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal','Ir64a Ir75a Or42b Retinal'};
-gen_Control = {'Orco Control','Ir8a Control','Orco Ir8a Control', ...
-    'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control', ...
-    'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
-    'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control','Ir64a Ir75a Or42b Control'};
+% gen_Retinal = {'Orco Retinal','Ir8a Retinal','Orco Ir8a Retinal', ...
+%     'Or42a Retinal','Or42b Retinal', 'Or92a Retinal', 'Ir64a Retinal', 'Ir75a Retinal', ...
+%     'Or42b Or92a Retinal', 'Ir64a Ir75a Retinal', 'Ir64a Or42b Retinal', ...
+%     'Ir64a Ir75a Or42b Retinal', 'Or42a Or42b Or92a Retinal','Ir64a Ir75a Or42b Retinal'};
+% gen_Control = {'Orco Control','Ir8a Control','Orco Ir8a Control', ...
+%     'Or42a Control','Or42b Control', 'Or92a Control', 'Ir64a Control', 'Ir75a Control', ...
+%     'Or42b Or92a Control', 'Ir64a Ir75a Control', 'Ir64a Or42b Control', ...
+%     'Ir64a Ir75a Or42b Control', 'Or42a Or42b Or92a Control','Ir64a Ir75a Or42b Control'};
 rulesOfSummationAnalysis(gen_Retinal,meta)
+
+genTimeInside = {'Or42b Or92a Control','Or42b Or92a Retinal',...
+    'Ir64a Ir75a Or42b Control','Ir64a Ir75a Or42b Retinal',};
+plotTimeInsideLightZoneVsBorderRegion(genTimeInside,meta);
+close all

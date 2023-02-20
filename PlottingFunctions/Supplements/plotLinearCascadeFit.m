@@ -1,8 +1,9 @@
-function [fNum] = plotLinearCascadeFit(fNum)
+function [fNum] = plotLinearCascadeFit(fNum,meta)
 fs = 100;
 
 % Intensity to LFP
-load([pwd '\Data\LFP_2_25.mat'],'LFP','LFP_fit','stim','b','optFitN','eta','rho','lamb')
+%load([pwd '\Data\LFP_2_25.mat'],'LFP','LFP_fit','stim','b','optFitN','eta','rho','lamb')
+load(string(meta.LFPFilterFile),'LFP','LFP_fit','stim','b','optFitN','eta','rho','lamb');
 nStimPt = size(stim,2);
 tt = (1:nStimPt)./fs;
 tt_filt = (0:size(b,1)-2)./fs;
@@ -44,7 +45,8 @@ text(100,0.01./2,['err = ' num2str(rho(optFitN))])
 xlabel('residual norm ||Ax-b||_2');ylabel('solution norm ||x||_2')
 
 %% plot LFP to firing rate
-load([pwd '\Data\LFP2Rate_4_12.mat'],'spkrate','spkrate_fit','stim','b','optFitN','eta','rho','lamb')
+%load([pwd '\Data\LFP2Rate_4_12.mat'],'spkrate','spkrate_fit','stim','b','optFitN','eta','rho','lamb')
+load(string(meta.RateFilterFile),'spkrate','spkrate_fit','stim','b','optFitN','eta','rho','lamb');
 spkrate = reshape(spkrate,[],6)';
 
 figure(fNum+1);set(gcf,'Position',[2 42 838 924])

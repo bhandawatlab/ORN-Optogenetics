@@ -1,6 +1,7 @@
 function PlotAllFiguresEmp(genAll,genRetinal,meta)
 
 plotFold = [char(meta.plotFold) '\'];
+subFoldName = meta.foldName;
 
 % load in all data (both retinal and controls)
 %--------------------------------------------------------------------------
@@ -86,7 +87,7 @@ stopSpd = meta.stopThresh;
 printFigures(fNum,[plotFold 'GeneralBehavior/'],'RadialOccupancy_noStops_allGenotypes')
 
 %%
-% plot spatial-temporal position
+% plot spatial-temporal position comparison between controls and retinal
 close all;fNum = 1;
 for i = 1:numel(f_orcoAll)
     if mod(i,6)==1
@@ -97,13 +98,46 @@ for i = 1:numel(f_orcoAll)
     plotRadialPosition(f_orcoAll{i},meta.border,'after',true,'dt',...
         2.*f_orcoAll{i}.fs,'clims',[0 0.01]);
     title(f_orcoAll{i}.id)
+    if mod(k,2)==0
+        ax2 = gca;
+        currCLim(2,:) = ax2.CLim;
+        maxCLim = [0 max(currCLim(:,2))];
+        ax1.CLim = maxCLim;
+        ax2.CLim = maxCLim;
+    else
+        ax1 = gca;
+        currCLim(1,:) = ax1.CLim;
+    end
     k = k+1;
     
     if i == numel(f_orcoAll) || k==7
         printFigures([fNum-1 nan],[plotFold 'GeneralBehavior/'],...
-            ['SpatialTemporal_Density_' num2str(fNum-1)])
+            ['SpatialTemporal_Density_RetinalControl' num2str(fNum-1)])
     end
 end
+
+% plot spatial-temporal position comparison for retinal
+[retinalNdx,~]=ismember(genAll,genRetinal);
+f_orcoRetinal = f_orcoAll(retinalNdx);
+close all;fNum = 1;
+for i = 1:numel(f_orcoRetinal)
+    if mod(i,4)==1
+        figure(fNum);set(gcf,'Position',[2 42 1000 924])
+        fNum = fNum+1;k = 1;
+    end
+    subplot(2,2,k);
+    plotRadialPosition(f_orcoRetinal{i},meta.border,'after',true,'dt',...
+        2.*f_orcoRetinal{i}.fs,'clims',[0 0.01]);
+    title(f_orcoRetinal{i}.id)
+    ax = gca;
+    ax.CLim = [0 ax.CLim(end)];
+    k = k+1;
+    if i == numel(f_orcoRetinal) || k==5
+        printFigures([fNum-1 nan],[plotFold 'GeneralBehavior/'],...
+            ['SpatialTemporal_Density_Retinal' num2str(fNum-1)])
+    end
+end
+
 %printFigures(fNum,[plotFold 'GeneralBehavior/'],'SpatialTemporal_Density_AllGenotypes')
 
 %%
@@ -113,6 +147,29 @@ if meta.adaptation == false
     [fNum,~,~] = plotStatTestRetContKNN(reshape(f_orcoAll,2,[]),meta.States2Plot_KNN,0,0.05,fNum);
     printFigures(fNum,[plotFold meta.foldName],'KNN_Control_Retinal_KS-test_p_05_color')
 end
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% plotting analysis figures for control only %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[retinalNdx,~]=ismember(genAll,genRetinal);
+controlNdx = ~retinalNdx;
+
+%%
+% plot KNN kinematic distributions image and relative colormap for control flies
+close all;fNum = 1;
+[~,currState,currKin] = plotKNNKinematics2(f_orcoAll(controlNdx),meta.States2Plot_KNN,...
+    meta.tSlice,'imagesc','relative',fNum);
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Relative_Heatmap/'],...
+    '_relative_heatmap_allGenotypes_Control')
+
+%%
+% plot turn optimality imagesc and relative colormap for control flies
+close all;fNum = 1;
+[fNum,currState] = plotTurnOpt2(f_orcoAll(controlNdx),meta.States2Plot_Opt,meta.tSlice,...
+    'imagesc','relative',true,false,fNum);
+currKin = cellstr(repmat('TurnOptimality',numel(currState),1))';
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Relative_Heatmap/'],'_relative_heatmap_Control')
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +199,7 @@ end
 % %%
 % % create subfolders for plots
 % KNN_folders = {'KNN_Absolute_Heatmap','KNN_Relative_Heatmap','Inhibition'};
-foldName = meta.foldName;
+% subFoldName = meta.foldName;
 % for i = 1:numel(KNN_folders)
 %     if ~exist(['Figures/' foldName KNN_folders{i}], 'dir')
 %         mkdir(['Figures/' foldName KNN_folders{i}])
@@ -169,7 +226,7 @@ if meta.plotSupplements == true
     %%
     % plot Linear-linear cascade fit
     close all;fNum = 1;
-    [fNum] = plotLinearCascadeFit(fNum);
+    [fNum] = plotLinearCascadeFit(fNum,meta);
     printFigures(fNum,[plotFold 'LinearFilterAnalysis/'],'Linear Linear Filter')
     
     %%
@@ -212,6 +269,7 @@ if meta.plotSupplements == true
     close all;fNum = 1;
     plotTime2FirstStateTransition(f_orcoAll{1},true);
     printFigures(fNum,[plotFold 'f_dfInfo/'],'Time2FirstStateTransitionAfterPeakInDf')
+    
 end
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,7 +284,7 @@ if meta.adaptation == true
     %%%[~,currState,currKin] = plotStatTestAdaptationKNN(f_orcoAll,meta.States2Plot_KNN,meta.tSlice,fNum);
     [~,currState,currKin] = plotKNN_Habituation_PermutationTest...
         (f_orcoAll,1:4,meta.tSlice,fNum);
-    plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Emp_KS_test/'],...
+    plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Emp_KS_test/'],...
         '__allGenotypes')
 end
 
@@ -236,39 +294,39 @@ if meta.adaptation == false
     close all;fNum = 1;
     fNum = plotDistributionComparisons(f_orcoAll,meta.States2Plot_KNN,fNum);
     %[fNum,~,~] = plotDistributionComparisons2(f_orcoAll,meta.States2Plot_KNN,fNum);
-    printFigures(fNum,[plotFold foldName],'KNN_Distribution_Fit_2')
+    printFigures(fNum,[plotFold subFoldName],'KNN_Distribution_Fit_2')
 end
 
 %%
 % plot transition probability image and relative colormap
 close all;fNum = 1;
 [fNum] = plotTransitionProbability2(f_orcoAll,'imagesc','relative',fNum);
-printFigures(fNum,[plotFold foldName],'TransitionProbability_relative_heatmap_allGenotypes')
+printFigures(fNum,[plotFold subFoldName],'TransitionProbability_relative_heatmap_allGenotypes')
 
 %%
 % plot transition probability image and absolute colormap
 close all;fNum = 1;
 [fNum] = plotTransitionProbability2(f_orcoAll,'imagesc','absolute',fNum);
-printFigures(fNum,[plotFold foldName],'TransitionProbability_absolute_heatmap_allGenotypes')
+printFigures(fNum,[plotFold subFoldName],'TransitionProbability_absolute_heatmap_allGenotypes')
 
 %%
 % plot baseline kinematic comparisons
 close all;fNum = 1;
 [fNum] = plotBaselineKinematics(f_orcoAll,meta.border,fNum);
-printFigures(fNum,[plotFold foldName],'BaselineKinematics')
+printFigures(fNum,[plotFold subFoldName],'BaselineKinematics')
 
 %%
 % plot spatial probability map
 close all;fNum = 1;
 [fNum] = plotROISpatialProb(f_orcoAll,[0.1 0.1],'H',meta.border,fNum);
-printFigures(fNum,[plotFold foldName],'SpatialProbMap')
+printFigures(fNum,[plotFold subFoldName],'SpatialProbMap')
 
 %
 % plot inhibition kinematics
 close all;fNum = 1;
 [~,currState,currKin] = plotInhibitionKinematics2(f_orcoAll,...
     meta.States2Plot_Inh,meta.tSlice,fNum);
-plotKNNDistributions(currState,currKin,[plotFold foldName 'Inhibition/'],...
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'Inhibition/'],...
     '_inhibition_allGenotypes')
 
 %%
@@ -276,7 +334,7 @@ plotKNNDistributions(currState,currKin,[plotFold foldName 'Inhibition/'],...
 close all;fNum = 1;
 [~,currState,currKin] = plotKNNKinematics2(f_orcoAll,meta.States2Plot_KNN,...
     meta.tSlice,'imagesc','absolute',fNum);
-plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Absolute_Heatmap/'],...
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Absolute_Heatmap/'],...
     '_absolute_heatmap_allGenotypes')
 
 %%
@@ -284,7 +342,7 @@ plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Absolute_Heatmap/
 close all;fNum = 1;
 [~,currState,currKin] = plotKNNKinematics2(f_orcoAll,meta.States2Plot_KNN,...
     meta.tSlice,'imagesc','relative',fNum);
-plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Relative_Heatmap/'],...
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Relative_Heatmap/'],...
     '_relative_heatmap_allGenotypes')
 
 %%
@@ -292,7 +350,7 @@ plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Relative_Heatmap/
 close all;fNum = 1;
 [~,currState,currKin] = plotKNNKinematicsSTD(f_orcoAll,meta.States2Plot_KNN,...
     meta.tSlice,'imagesc','absolute',fNum);
-plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Absolute_Heatmap/'],...
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Absolute_Heatmap/'],...
     '_absolute_heatmap_allGenotypes_std')
 
 %%
@@ -300,20 +358,20 @@ plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Absolute_Heatmap/
 close all;fNum = 1;
 [~,currState,currKin] = plotKNNKinematicsSTD(f_orcoAll,meta.States2Plot_KNN,...
     meta.tSlice,'imagesc','relative',fNum);
-plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Relative_Heatmap/'],...
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Relative_Heatmap/'],...
     '_relative_heatmap_allGenotypes_std')
 
 %%
 % plot turn optimality during inhibition for sharp turn
 close all;fNum = 1;state = 1;
 fNum = plotInhibitionOpt2(f_orcoAll,state,meta.tSlice2,fNum);
-printFigures(fNum,[plotFold foldName 'Inhibition/'],'SharpTurn_TurnOptimality_inhibition_allGenotypes')
+printFigures(fNum,[plotFold subFoldName 'Inhibition/'],'SharpTurn_TurnOptimality_inhibition_allGenotypes')
 
 %%
 % plot turn optimality during inhibition for curved walks
 close all;fNum = 1;state = 2;
 fNum = plotInhibitionOpt2(f_orcoAll,state,meta.tSlice2,fNum);
-printFigures(fNum,[plotFold foldName 'Inhibition/'],'CurvedWalk_TurnOptimality_inhibition_allGenotypes')
+printFigures(fNum,[plotFold subFoldName 'Inhibition/'],'CurvedWalk_TurnOptimality_inhibition_allGenotypes')
 
 %%
 % plot turn optimality imagesc and absolute colormap
@@ -321,7 +379,7 @@ close all;fNum = 1;
 [fNum,currState] = plotTurnOpt2(f_orcoAll,meta.States2Plot_Opt,meta.tSlice,...
     'imagesc','absolute',true,false,fNum);
 currKin = cellstr(repmat('TurnOptimality',numel(currState),1))';
-plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Absolute_Heatmap/'],'_absolute_heatmap')
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Absolute_Heatmap/'],'_absolute_heatmap')
 
 %%
 % plot turn optimality imagesc and relative colormap
@@ -330,8 +388,8 @@ close all;fNum = 1;
     'imagesc','relative',true,false,fNum);
 currKin = cellstr(repmat('TurnOptimality',numel(currState),1))';
 h2 = findall(groot,'Type','figure');
-plotKNNDistributions(currState,currKin,[plotFold foldName 'KNN_Relative_Heatmap/'],'_relative_heatmap')
-printFigures(setdiff([h2.Number],1:numel(currKin)),[plotFold foldName],'KNN_TurnOptimality_OLS_dF')
+plotKNNDistributions(currState,currKin,[plotFold subFoldName 'KNN_Relative_Heatmap/'],'_relative_heatmap')
+printFigures(setdiff([h2.Number],1:numel(currKin)),[plotFold subFoldName],'KNN_TurnOptimality_OLS_dF')
 
 %%
 close all
