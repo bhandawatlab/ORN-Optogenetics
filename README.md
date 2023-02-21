@@ -10,6 +10,14 @@ To get started, please download or clone the GitHub repository
 ```shell
 $ git clone https://github.com/bhandawatlab/ORN-Optogenetics.git
 ```
+You will need the following list of add ons in MATLAB
+1. Global Optimization Toolbox
+2. Curve Fitting Toolbox
+3. Parallel Computing Toolbox
+4. Statistics an Machine Learning Toolbox
+5. Signal Processing Toolbox
+6. Image Processing Toolbox
+
 ## Usage on dataset presented in the paper
 
 In MATLAB, navigate to the repository folder and run: `Run_Pipeline`
@@ -32,28 +40,28 @@ Data folder structure example:
 ```
  |-- Experiment_20230218-08_36
     |-- Data
-	    |-- Calibrations
-	    |-- DataGen - Consolidated mat files where each file will contain information from all flies for a given genotype
-	    |-- DataRaw - raw tracked files from the CircularArenaTrackingCode
-		    |-- Genotype name - each genotype folder contains single fly mat files from the tracking code
-	    |-- DataSpike - ORN firing rate data (extimated from linear filters)
-	    |-- DataStim - Light intensity data
-	    |-- SummationModel - Figure 6 summation model data
-	    |-- Training Data - single sensillum recordings data
-	|-- DataModel - Mat files (1 for each genotype) containing a fly object
-	|-- DataRT - Synthetic fly files. Each genotype will have 2 files. The one ending with _flies contains the fly object.
-	|-- Figures
-	    |-- GeneralBehavior - General quantifications of behaviour such as probability inside, radial occupancy, etc.
-		    |-- XY tracks - positions of each fly by genotype sorted according to attraction index
-	    |-- f_dfInfo - general information about setting up the f/df space and other analysis
-	    |-- Habituation/Time Averaged - KNN space plots
-		    |-- KNN_Absolute_Heatmap - colormap is set to absolute values
-		    |-- KNN_Relative_Heatmap - colormap is set to relative to before baseline
-		    |-- KNN_Emp_KS_test - 1.) KS test between control and retinal 2.) Permutation test if looking at habituation
-		    |-- Inhibition - how kinematics and turn optimality change over time when the firing rate is inhibited
-	    |-- LinearFilterAnalysis - figures related to TTA, GLM, and linear filters from firing rate to kinematics/turn probability
-	    |-- EmpSynth - Analysis figures for synthetic flies (e.g. KNN space) and for comparisons with empirical flies (e.g. radial occupancy)
-	    |-- SummationAnalysis - analysis figures for how ORNs combine to influence behavior.
+        |-- Calibrations
+        |-- DataGen - Consolidated mat files where each file will contain information from all flies for a given genotype
+        |-- DataRaw - raw tracked files from the CircularArenaTrackingCode
+	    |-- Genotype name - each genotype folder contains single fly mat files from the tracking code
+	|-- DataSpike - ORN firing rate data (extimated from linear filters)
+	|-- DataStim - Light intensity data
+	|-- SummationModel - Figure 6 summation model data
+	|-- Training Data - single sensillum recordings data
+    |-- DataModel - Mat files (1 for each genotype) containing a fly object
+    |-- DataRT - Synthetic fly files. Each genotype will have 2 files. The one ending with _flies contains the fly object.
+    |-- Figures
+        |-- GeneralBehavior - General quantifications of behaviour such as probability inside, radial occupancy, etc.
+            |-- XY tracks - positions of each fly by genotype sorted according to attraction index
+        |-- f_dfInfo - general information about setting up the f/df space and other analysis
+        |-- Habituation/Time Averaged - KNN space plots
+            |-- KNN_Absolute_Heatmap - colormap is set to absolute values
+            |-- KNN_Relative_Heatmap - colormap is set to relative to before baseline
+            |-- KNN_Emp_KS_test - 1.) KS test between control and retinal 2.) Permutation test if looking at habituation
+            |-- Inhibition - how kinematics and turn optimality change over time when the firing rate is inhibited
+        |-- LinearFilterAnalysis - figures related to TTA, GLM, and linear filters from firing rate to kinematics/turn probability
+        |-- EmpSynth - Analysis figures for synthetic flies (e.g. KNN space) and for comparisons with empirical flies (e.g. radial occupancy)
+        |-- SummationAnalysis - analysis figures for how ORNs combine to influence behavior.
 ```
 ## Authors and Citation
 
