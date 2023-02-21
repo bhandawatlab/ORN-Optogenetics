@@ -1,7 +1,7 @@
 function [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transitionsOnly,meta,plotFigure)
 % linearFilterAnalysisSpeedCurvature  wrapper function for calculating the
 %   linear filters and turn triggered average for sharp turn transition
-%   probability and probability of being in a turn at crossing (defined by 
+%   probability and probability of being in a turn at crossing (defined by
 %   delta firing rate)
 %
 %   Inputs: f_orco = fly object
@@ -12,7 +12,7 @@ function [b_leave,b_enter] = linearFilterAnalysisCW2TurnTransition(f_orco,transi
 %
 %   Output: b_leave = n x m linear filters for turn prob when leaving
 %           b_enter = linear filters for turn prob when entering
-%   
+%
 close all
 if plotFigure
     if ~exist(strcat(string(meta.plotFold),'/LinearFilterAnalysis/'), 'dir')
@@ -124,17 +124,22 @@ end
 if plotFigure
     psFileName = strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.ps');
     if exist(psFileName, 'file')==2
-      delete(psFileName);
+        delete(psFileName);
     end
     for f = 1:get(gcf,'Number')
         figure(f);
         print('-painters','-dpsc2',psFileName,'-loose','-append');
     end
-    ps2pdf('psfile', psFileName, 'pdffile', ...
-    strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.pdf'), 'gspapersize', 'letter',...
-    'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
-    'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
-    'gslibpath','C:\Program Files\gs\gs9.50\lib');
+    try
+        ps2pdf('psfile', psFileName, 'pdffile', ...
+            strcat(string(meta.plotFold),'/LinearFilterAnalysis/', figureFile,'.pdf'), 'gspapersize', 'letter',...
+            'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
+            'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
+            'gslibpath','C:\Program Files\gs\gs9.50\lib');
+    catch
+        disp('No ghostscript available. Please install ghostscript or ')
+        disp('change path to ghostscript in line 134 of linearFilterAnalysisCW2TurnTransition.m')
+    end
 end
 
 end
@@ -168,8 +173,8 @@ for fly = 1:f_orco.nFly
     turnNdxAbs{fly} = startNdx+turnNdx(track)-1;
     turnNdxAbs_Trans{fly} = startNdx;
     turnNdxAbs_during{fly} = find(f_orco.states.ndx(fly,:)==stNdx);
-    
-    
+
+
     during_firingRate = [during_firingRate f_orco.spk(fly,fe(fly):end)];
     during_deltaFiringRate = [during_deltaFiringRate df(fly,fe(fly):end)];
     beforeDuring(fly,fe(fly):end) = true;
@@ -208,12 +213,12 @@ for cond = 1:nCond
     staAllFly_f(:,cond) = nanmean(sta_allF);
     sta_allF(~during) = nan;
     staAllFly_f_noBefore(:,cond) = nanmean(sta_allF);
-    
+
     sta_alldF = cell2mat(staByFly_df(:,cond));
     staAllFly_df(:,cond) = nanmean(sta_alldF);
     sta_alldF(~during) = nan;
     staAllFly_df_noBefore(:,cond) = nanmean(sta_alldF);
-    
+
     for track = 1:size(sta_allF,1)
         ndx = find(abs(sta_allF(track,:)-fr_baseline)>0.001,1,'last');
         if isempty(ndx)
@@ -269,8 +274,8 @@ if plotFigure
     plot([-meta.delay 0]./30,meandFR_during.*[1 1],'-k','LineWidth',2);
     plot([-meta.delay 0]./30,meandFR_during_noBaseline.*[1 1],'--k','LineWidth',2);
     xlabel('meta.delay (s)');ylabel('delta firing rate (spikes/s^2)');
-    
-    
+
+
     %print('-painters','-dpdf',strcat(string(meta.plotFold),'/LinearFilterAnalysis/STA_sharpTurnAnalysis.pdf'));
 end
 end

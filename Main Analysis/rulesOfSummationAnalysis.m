@@ -152,11 +152,11 @@ if numel(missingFilesNdx)==0
     for i = 1:numel(allMat)
         allMat{i} = [meta.summationModelFold allMat{i}];
     end
-    
+
     %plot posterior
     close all
     plotPosterior(allMat,plotFolder);
-    
+
     % plot synergy
     close all
     fNum = 1;
@@ -165,21 +165,21 @@ if numel(missingFilesNdx)==0
     fNum = plotSynergy(allMat,'alpha',false,fNum);
     fNum = plotSynergy(allMat,'full',false,fNum);
     fNum = plotCovariance(allMat,fNum);
-    
+
     nORN = [36,5,41,1,1,1,1,1,2,2,2,3,3];
     states2Cons = [1,2,3,4,7];
     load(allMat{end},'stateKinBaseline','stateKinAll','RegionLabel','f_orco');
     fNum = plotSynergisticByNumberOfORN(f_orco,stateKinBaseline,stateKinAll,...
         RegionLabel,nORN,states2Cons,fNum);
-    
+
     close all
     type = 'relative';%absolute
     %threshold = [0.15,0.15,0.15,0.15];
     threshold = [0.1,0.1,0.1,0.1];
     plotSignificanceChangeByROI(allMat,t1*2.5,t2*2.5,t3,4.17+5,type,threshold);
     printFigures([plotFolder '\ORN optogenetics_SynergyPosteriorByROI_realSpace_relative'])
-    
-    
+
+
     %% older plots not used
     % states2Cons = [1,2,3,4];
     % newOrder = [2,3,1,4,5];
@@ -241,7 +241,7 @@ for i = 1:numel(allMat)
         colLab = {['mu ' labCov{1}],['mu ' labCov{2}],'muAB','Synergy (full)'};
     end
     covar = zeros(numel(states2Cons),5);
-    
+
     varAB = cell(numel(states2Cons),4);
     synergy = cell(numel(states2Cons),4);
     k = 1;
@@ -265,7 +265,7 @@ for i = 1:numel(allMat)
                 prodMat = sign(prod(allMedBestFit{state,ROI}(MuIdx)));
                 synMat = sign((allMedBestFit{state,ROI}(SynergyIdx)));
                 singleMat = sign(allMedBestFit{state,ROI}(MuIdx(1)));
-                
+
                 if prodMat==1 && synMat==singleMat
                     varAB{state,4}(x(ROI)) = 1;
                 elseif prodMat==1 && synMat~=singleMat
@@ -275,17 +275,17 @@ for i = 1:numel(allMat)
                 end
             end
         end
-        
+
         for j = 1:4
             subplot(numel(states2Cons),4,k)
             imagesc(varAB{state,j},[-1 1])
-            
+
             set(gca,'ytick',[1:1:8],'yticklabel',fType);
             set(gca,'xtick',[1:1:5],'xticklabel',dFType);
             cMap = jet(201);
             cMap(101,:)=1;
             colormap(cMap);
-            
+
             if j <4
                 t2 = compose('%g',round(varAB{state,j},2));
                 neg = varAB{state,j}<0;
@@ -295,7 +295,7 @@ for i = 1:numel(allMat)
                 neg = synergy{state,j}<0;
                 pos = synergy{state,j}>0;
             end
-            
+
             [xx,yy] = meshgrid([1:3],[1:3]);
             %text(xx(pos), yy(pos), t2(pos), 'HorizontalAlignment', 'Center','Color','k')%
             %text(xx(pos), yy(pos), t2(pos), 'HorizontalAlignment', 'Center','Color','k')%
@@ -330,13 +330,13 @@ pGen = [pBaseline,pGen];
 pCovGen(:,1) = [0;0;1];
 
 for i = 1:numel(allMat)
-    
+
     if mod(i,6)==1
         figure(fNum);set(gcf,'Position',[2 42 838 924]);
         fNum = fNum+1;
         k = 1;
     end
-    
+
     %close all
     load(allMat{i},'allMedBestFit','f_orco','RegionLabel','labCov')
     covar = zeros(numel(states2Cons),5);
@@ -355,7 +355,7 @@ for i = 1:numel(allMat)
             end
         end
     end
-    
+
     subplot(3,2,k);
     imagesc(covar(:,newOrder),[-3 3]./2);
     tickLabels = strtrim(sprintf('%s\\newline%s\n', stateType{:,states2Cons}));
@@ -368,7 +368,7 @@ for i = 1:numel(allMat)
         cb.YTick = [-1 0 1];
         cb.YTickLabel = {'Rigid', 'N/A', 'Loose'};
     end
-    
+
     k = k+1;
 end
 
@@ -391,17 +391,17 @@ for stateNdx = 1:numel(states2Cons)
             mean2 = mean(tmpDat)-currBaselineMu;
             allParams(1,i) = mean2;
         end
-        
+
         x0 = log10(nORN(1,:));
         y0 = allParams(1,:);
         p = polyfit(x0(~isnan(y0)),y0(~isnan(y0)),3);
         x1 = log10([1:41]);
         f1(1,:) = polyval(p,x1);
-        
+
         subplot(numel(states2Cons),5,(stateNdx-1).*5+ROI);hold on;
         scatter(log10(nORN(1,:)),allParams(1,:),30,'r','LineWidth',1.5);
         plot(x1,f1(1,:),'-r','Linewidth',2)
-        
+
         currMean = nanmean(allParams(1,nORN==1)).*[1:100];
         currUB = max(allParams(1,nORN==1)).*[1:100];
         currLB = min(allParams(1,nORN==1)).*[1:100];
@@ -431,14 +431,14 @@ tit = ['Synergy (' type ') between pairs'];
 for i = 1:numel(allMat)
     %close all
     load(allMat{i})
-    
+
     if mod(i,6)==1
         figure(fNum);set(gcf,'Position',[2 42 838 924]);
         suptitle(tit)
         fNum = fNum+1;
         k = 1;
     end
-    
+
     synergy = nan(4,5);
     for state = 1:4
         m = f_orco.model.params{state};
@@ -457,7 +457,7 @@ for i = 1:numel(allMat)
             end
         end
     end
-    
+
     subplot(3,2,k)
     if plotSyn==true
         tmpSynergy = nan(size(synergy));
@@ -479,18 +479,18 @@ for i = 1:numel(allMat)
             cb.YTickLabel = {'Ant', 'N/A', 'Syn'};
         end
     end
-    
+
     t2 = compose('%g',round(synergy(1:4,newOrder),2));
     neg = synergy(1:4,newOrder)<0;
     pos = synergy(1:4,newOrder)>0;
-    
+
     [xx,yy] = meshgrid([1:5],[1:4]);
     %     text(xx(pos), yy(pos), t2(pos), 'HorizontalAlignment', 'Center','Color','k')%
     %     text(xx(neg), yy(neg), t2(neg), 'HorizontalAlignment', 'Center','Color','w')
     %text(xx(:), yy(:), t2, 'HorizontalAlignment', 'Center')%,'Color','w'
     text(xx(:), yy(:), t2(:), 'HorizontalAlignment', 'Center','Color',0.5.*[1 1 1])
     title([labCov{1,1} ' + ' labCov{2,1}])
-    
+
     k = k+1;
 end
 end
@@ -506,14 +506,14 @@ figure;set(gcf,'Position',[2 42 838 924])
 for i = 1:numel(allMat)
     %close all
     load(allMat{i})
-    
+
     if mod(i,6)==1
         figure(fNum);set(gcf,'Position',[2 42 838 924]);
         suptitle(tit)
         fNum = fNum+1;
         k = 1;
     end
-    
+
     covar = nan(4,5);
     for state = 1:4
         m = f_orco.model.params{state};
@@ -532,18 +532,18 @@ for i = 1:numel(allMat)
     if mod(k,2)==0 || i==numel(allMat)
         cb=colorbar;cb.Position = cb.Position + [0.75e-1, 0, 0, 0];
     end
-    
+
     t2 = compose('%g',round(covar(1:4,newOrder),2));
     neg = covar(1:4,newOrder)<0;
     pos = covar(1:4,newOrder)>0;
-    
+
     [xx,yy] = meshgrid([1:5],[1:4]);
     %     text(xx(pos), yy(pos), t2(pos), 'HorizontalAlignment', 'Center','Color','k')%
     %     text(xx(neg), yy(neg), t2(neg), 'HorizontalAlignment', 'Center','Color','w')
     text(xx(:), yy(:), t2(:), 'HorizontalAlignment', 'Center','Color',0.5.*[1 1 1])
     %text(xx(:), yy(:), t2, 'HorizontalAlignment', 'Center')%,'Color','w'
     title([labCov{1,1} ' + ' labCov{2,1}])
-    
+
     k = k+1;
 end
 end
@@ -560,7 +560,7 @@ for i = 1:numel(allMat)
     plotPosteriorVar(f_orco,allMedBestFit,allPci_95,allPci_99,RegionLabel,lab);
     %%
     plotPosteriorDistribution(f_orco,allMedBestFit,RegionLabel,lab);
-    
+
     C = strsplit(allMat{i},{'.','\'});
     fName = [C{end-1} '_Posterior'];
     %fName = [allMat{i}(1:end-4) '_Posterior'];
@@ -577,14 +577,14 @@ for state = 1:8
     for ROI = 1:5
         medBestFit = allMedBestFit{state,ROI};
         if ~isempty(medBestFit)
-            
+
             medBestFitMu = medBestFit(1:nParam);
             medBestFitSigma = sqrt(abs(medBestFit(nParam+1:nParam*2)));
             sgn = sign(medBestFit(nParam+1:nParam*2));
-            
+
             subplot(8,5,k);hold on;
             scatter(medBestFitMu,1:5,'ok')
-            
+
             for i = 1:nParam
                 if sgn(i)==1
                     plot(medBestFitMu(i)+2.*medBestFitSigma(i).*[-1 1],[i i],'k');
@@ -619,18 +619,18 @@ for state = 1:8
         if ~isempty(medBestFit)
             pci_95 = allPci_95{state,ROI};
             pci_99 = allPci_99{state,ROI};
-            
+
             medBestFitVar = medBestFit(nParam+1:2*nParam);
             pciVar_95 = pci_95(:,nParam+1:2*nParam);
             pciVar_99 = pci_99(:,nParam+1:2*nParam);
-            
+
             subplot(8,5,k);hold on;
             for i = 1:nParam
                 plot(pciVar_95(:,i),[i i],'k','LineWidth',2.5);
                 plot(pciVar_99(:,i),[i i],'k');
             end
             scatter(medBestFitVar,1:5,'ok')
-            
+
             if ROI == 1
                 tickLabels = strtrim(sprintf('%s %s\n', lab{:}));
                 set(gca,'ytick',[0.5:1:5.5],'yticklabel',tickLabels);
@@ -657,18 +657,18 @@ for state = 1:8
         if ~isempty(medBestFit)
             pci_95 = allPci_95{state,ROI};
             pci_99 = allPci_99{state,ROI};
-            
+
             medBestFitMu = medBestFit(1:nParam);
             pciMu_95 = pci_95(:,1:nParam);
             pciMu_99 = pci_99(:,1:nParam);
-            
+
             subplot(8,5,k);hold on;
             for i = 1:nParam
                 plot(pciMu_95(:,i),[i i],'k','LineWidth',2.5);
                 plot(pciMu_99(:,i),[i i],'k');
             end
             scatter(medBestFitMu,1:5,'ok')
-            
+
             if ROI == 1
                 tickLabels = strtrim(sprintf('%s %s\n', lab{:}));
                 set(gca,'ytick',[0.5:1:5.5],'yticklabel',tickLabels);
@@ -714,14 +714,14 @@ for i = 1:3
                 currMuCov = allMedBestFit{state,ROI}(2*nParam+1:2*nParam+1)*pCovGen';
                 currSigCov = allMedBestFit{state,ROI}(2*nParam+2:2*nParam+2)*pCovGen';
                 tmpDat = log(stateKinAll{state,ROI,Gen2Cons(i)}.allDat);
-                
+
                 currMu = currMu(i)+currMuCov(i);
                 currSig = sqrt(currSig(i)+2.*currSigCov(i));
-                
+
                 dxOpt = getOptBinSize(tmpDat,'Sturges');
                 x_values = dx{state};
                 y1 = normpdf(x_values,currMu,currSig);
-                
+
                 if ~isempty(tmpDat) && dxOpt>0
                     subplot(8,5,(state-1).*5+ROI);
                     histogram(tmpDat,x_values,'Normalization','pdf');hold on;
@@ -767,12 +767,12 @@ pCovGen(3,:) = [1];
 tic;%nIt = 5;
 for state = 1:8
     m = f_orco.model.params{state};
-    
+
     if plotfig
         figure;set(gcf,'Position',[2 42 1069 924])
     end
     for ROI = 1:5
-        
+
         y = [];pAll = [];pCovAll = [];
         yBaseline = [];pAllBaseline = [];pCovAllBaseline = [];
         for i = 1:numel(Gen2Cons)
@@ -781,7 +781,7 @@ for state = 1:8
                 yBaseline = [yBaseline; stateKinBaseline{state,Gen2Cons(i)}];
                 pAllBaseline = [pAllBaseline; repmat(pBaseline(i,:),numel(stateKinBaseline{state,Gen2Cons(i)}),1)];
                 pCovAllBaseline = [pCovAllBaseline; repmat(pCovBaseline(i,:),numel(stateKinBaseline{state,Gen2Cons(i)}),1)];
-                
+
                 y = [y; stateKinAll{state,ROI,Gen2Cons(i)}.allDat];
                 pAll = [pAll; repmat(pGen(i,:),numel(stateKinAll{state,ROI,Gen2Cons(i)}.allDat),1)];
                 pCovAll = [pCovAll; repmat(pCovGen(i,:),numel(stateKinAll{state,ROI,Gen2Cons(i)}.allDat),1)];
@@ -792,9 +792,9 @@ for state = 1:8
         y = log([y;yBaseline]);
         pAll = [pAll;pAllBaseline];
         pCovAll = [pCovAll;pCovAllBaseline];
-        
+
         if ~isempty(y)
-            
+
             muF = @(p_mu,p_synergy) (p_mu*pAll'+p_synergy*pCovAll')';
             varF = @(p_sig,p_covar) (p_sig*pAll'+2.*p_covar*pCovAll')';
             pdf = @(y,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22) ...
@@ -803,7 +803,7 @@ for state = 1:8
             nLL = @(y,p) -sum(log(pdf(y,p(1),p(2),p(3),p(4),p(5),p(6),p(7),p(8),p(9),p(10),p(11),p(12),p(13),p(14),p(15),p(16),p(17),p(18),p(19),p(20),p(21),p(22))+eps));
             %lb = [-5.*ones(1,nParam),0.*ones(1,nParam),-5.*ones(1,nParamCov.*2)];
             %ub = [6.*ones(1,nParam.*2+nParamCov.*2)];
-            
+
             bestFit = zeros(nIt,nParam.*2+nParamCov.*2);
             pci_99= cell(nIt,1);pci_95= cell(nIt,1);
             for it = 1:nIt
@@ -813,7 +813,7 @@ for state = 1:8
                 p_covar = rand(1,nParamCov).*1-0.5;
                 opt = statset('mlecustom');
                 %opt.MaxIter = 1000;
-                
+
                 %tic;
                 try
                     phat2(1,:) = mle(y,'pdf',@(data,varargin) CustumLogNormalPDF(data,pAll,pCovAll,5,1,varargin),...
@@ -853,19 +853,19 @@ for state = 1:8
             pci_99(isnan(bestFit(:,1))) = [];
             pci_95(isnan(bestFit(:,1))) = [];
             bestFit(isnan(bestFit(:,1)),:) = [];
-            
+
             badNdx = cellfun(@(x) any(isnan(x),'all'),pci_95)==1 | cellfun(@(x) any(isnan(x),'all'),pci_99)==1;
             if ~all(badNdx)
                 pci_99(badNdx) = [];
                 pci_95(badNdx) = [];
                 bestFit(badNdx,:) = [];
             end
-            
+
             medBestFit = median(bestFit,1);
             [~,BestFitNdx] = min(sum(abs(bestFit-medBestFit),2));
             %input = num2cell(medBestFit);
             %fitPDF = pdf(y,input{:});
-            
+
             if plotfig
                 for i = 1:nParam
                     subplot(5,4,4.*(ROI-1)+1);hold on;
@@ -876,13 +876,13 @@ for state = 1:8
                     scatter(0.5.*linspace(0,1,size(bestFit,1))+i,bestFit(:,i+nParam));
                     plot([i,i+0.5],[median(bestFit(:,i+nParam)), median(bestFit(:,i+nParam))],'k','linewidth',2)
                     xlim([0.5 nParam+1])
-                    
+
                     if i<nParamCov+1
                         subplot(5,4,4.*(ROI-1)+3);hold on;
                         scatter(0.5.*linspace(0,1,size(bestFit,1))+i,bestFit(:,i+2*nParam));
                         plot([i,i+0.5],[median(bestFit(:,i+2*nParam)), median(bestFit(:,i+2*nParam))],'k','linewidth',2)
                         xlim([0.5 nParamCov+1])
-                        
+
                         subplot(5,4,4.*ROI);hold on;
                         scatter(0.5.*linspace(0,1,size(bestFit,1))+i,bestFit(:,i+2*nParam+nParamCov));
                         plot([i,i+0.5],[median(bestFit(:,i+2*nParam+nParamCov)), median(bestFit(:,i+2*nParam+nParamCov))],'k','linewidth',2)
@@ -896,7 +896,7 @@ for state = 1:8
                 subplot(5,4,4.*(ROI-1)+2);set(gca,'xtick',[1:nParam],'xticklabel',tickLabels)
                 xtickangle(20)
                 title([RegionLabel{ROI} ' var']);ylabel('var(log(x))')
-                
+
                 tickLabels = strtrim(sprintf('%s\\newline%s\n', labCov{:}));
                 subplot(5,4,4.*(ROI-1)+3);set(gca,'xtick',[1:nParamCov],'xticklabel',tickLabels)
                 xtickangle(20)
@@ -926,18 +926,18 @@ function [stateKinAll,stateKinBaseline,stateKinBaselineMu,stateKinBaselineVar,..
     StateLabel,f_orco] = getKinematicsByRegions(genAll,meta,t1,t2,t3,plotFig)
 for i = 1 :numel(genAll)%2%
     gen = genAll{i};
-    
+
     %     load([meta.folderObject '\' gen '_' meta.d meta.ext '.mat'],'f_orco');
     load(strcat(string(meta.foldDataModel),'\',gen,'_',meta.d,meta.ext,'.mat'),'f_orco');
     baseline = f_orco.spk(1);
-    
+
     XX = f_orco.model.TurnBias.XX;
     YY = f_orco.model.TurnBias.YY;
     for state = 1:8
         k = 1;
         m = f_orco.model.params{state};
         baseLineNdx = abs(m.alldSpk)<0.1 & (m.allSpk-baseline)<0.1;
-        
+
         if (i == 1) && (state == 2) && plotFig
             figure;scatter(m.alldSpk(~baseLineNdx),m.allSpk(~baseLineNdx));hold on;
             plot([t1 t1],[0 50],'k','Linewidth',1);
@@ -956,13 +956,13 @@ for i = 1 :numel(genAll)%2%
         nonBaselineDSpk = m.alldSpk(~baseLineNdx);
         nonBaselineSpk = m.allSpk(~baseLineNdx);
         BaselineDat = m.baselineDat+10*eps;
-        
+
         ROI1 = nonBaselineDSpk<t1;
         ROI2 = nonBaselineDSpk>t2;
         ROI3 = (nonBaselineSpk>t3) & ~ROI1 & ~ROI2;
         ROI4 = (nonBaselineSpk<baseline) & ~ROI1 & ~ROI2;
         ROI5 = ~ROI1 & ~ROI2 & ~ROI3 & ~ROI4;
-        
+
         stateKinAll{state,1,i}.alldSpk = nonBaselineDSpk(ROI1);
         stateKinAll{state,2,i}.alldSpk = nonBaselineDSpk(ROI2);
         stateKinAll{state,3,i}.alldSpk = nonBaselineDSpk(ROI3);
@@ -978,11 +978,11 @@ for i = 1 :numel(genAll)%2%
         stateKinAll{state,3,i}.allDat = nonBaselineDat(ROI3);
         stateKinAll{state,4,i}.allDat = nonBaselineDat(ROI4);
         stateKinAll{state,5,i}.allDat = nonBaselineDat(ROI5);
-        
+
         stateKinBaseline{state,i} = BaselineDat;
         stateKinBaselineMu(state,i) = mean(log(BaselineDat));
         stateKinBaselineVar(state,i) = var(log(BaselineDat));
-        
+
         StateLabel{state} = [m.state.state ' ' m.state.kin];
     end
 end
@@ -994,11 +994,15 @@ for f = 1:get(gcf,'Number')
     figure(f);
     print('-painters','-dpsc2',[fName '.ps'],'-append');
 end
-ps2pdf('psfile', [fName '.ps'], 'pdffile', [fName '.pdf'], 'gspapersize', 'letter',...
-    'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
-    'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
-    'gslibpath','C:\Program Files\gs\gs9.50\lib');
-
+try
+    ps2pdf('psfile', [fName '.ps'], 'pdffile', [fName '.pdf'], 'gspapersize', 'letter',...
+        'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
+        'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
+        'gslibpath','C:\Program Files\gs\gs9.50\lib');
+catch
+    disp('No ghostscript available. Please install ghostscript or ')
+    disp('change path to ghostscript in line 998 of rulesOfSummationAnalysis.m')
+end
 
 end
 

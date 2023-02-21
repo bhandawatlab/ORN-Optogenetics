@@ -430,10 +430,15 @@ for f = fRange
     figure(f);
     print('-bestfit','-painters','-dpsc2',[folder figTitle '.ps'],'-loose','-append');
 end
-ps2pdf('psfile', [folder figTitle '.ps'], 'pdffile', [folder figTitle '.pdf'], 'gspapersize', 'letter',...
-    'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
-    'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
-    'gslibpath','C:\Program Files\gs\gs9.50\lib');
+try
+    ps2pdf('psfile', [folder figTitle '.ps'], 'pdffile', [folder figTitle '.pdf'], 'gspapersize', 'letter',...
+        'gscommand','C:\Program Files\gs\gs9.50\bin\gswin64.exe',...
+        'gsfontpath','C:\Program Files\gs\gs9.50\lib',...
+        'gslibpath','C:\Program Files\gs\gs9.50\lib');
+catch
+    disp('No ghostscript available. Please install ghostscript or ')
+    disp('change path to ghostscript in line 434 of PlotAllFiguresEmp.m')
+end
 end
 
 %%% some old code

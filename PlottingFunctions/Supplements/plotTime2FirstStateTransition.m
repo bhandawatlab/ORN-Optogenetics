@@ -32,10 +32,10 @@ if plotFig
 end
 subplot(3,2,5);
 imagesc((1:size(rast_exit{1},2))./f_orco.fs,1:size(rast_exit{1},1),1-rast_exit{1});colormap(gray)
-xlabel('time since peak');ylabel('peak #');
+xlabel('time since negative peak');ylabel('peak #');
 subplot(3,2,6);
 imagesc((1:size(rast_enter{1},2))./f_orco.fs,1:size(rast_enter{1},1),1-rast_enter{1});colormap(gray)
-xlabel('time since peak');ylabel('peak #');
+xlabel('time since positive peak');ylabel('peak #');
 end
 
 function [exitTrajectory,transitionProb,transProbRand,rast,rastBaseline] = getExitTrajectory(f_orco,crossingtype,dF,thresh)
