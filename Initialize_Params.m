@@ -16,8 +16,10 @@ function [meta] = Initialize_Params(Destination_path)    % clc
     %disp(data)
     %A = csvread('Test.csv') %, 'columns', {'X, 'Y', 'Z'});
     %disp(A)
-    copyfile('Config.csv', [Destination_path '\' 'Config.csv']);
-    A = readcell(['Config.csv']); %textscan(fin,'%s','Delimiter','\n')
+    if ~exist([Destination_path '\' 'Config.csv'],'file')
+        copyfile('Config.csv', [Destination_path '\' 'Config.csv']);
+    end
+    A = readcell([Destination_path '\' 'Config.csv']); %textscan(fin,'%s','Delimiter','\n')
     B = string(A(:, 1));
 
     dateValIdx = find(B=='d');

@@ -59,11 +59,11 @@ N_byFly_dur = N_byFly_dur+eps;N_byFly_dur = N_byFly_dur./sum(N_byFly_dur,2);
 radialProb.before.flyMu = nanmean(N_byFly_bef);
 radialProb.before.std = std(N_byFly_bef,w_Before);
 %radialProb.before.std = nanstd(N_byFly_bef);
-radialProb.before.sem = radialProb.before.std./(self.nFly-1);
+radialProb.before.sem = radialProb.before.std./sqrt(self.nFly);
 radialProb.during.std = std(N_byFly_dur,w_During);
 %radialProb.during.std = nanstd(N_byFly_dur);
 radialProb.during.flyMu = nanmean(N_byFly_dur);
-radialProb.during.sem = radialProb.during.std./(self.nFly-1);
+radialProb.during.sem = radialProb.during.std./sqrt(self.nFly);
 
 % average across all data points (each fly is weighted by amount of time)
 [N,~] = histcounts(cell2mat(Before),edges);
