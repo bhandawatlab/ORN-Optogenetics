@@ -1,4 +1,4 @@
-function [turnBias,turnBiasRaw,XX,YY,turnBias_baseline,turnBias_during_baseline] =  ...
+function [turnBias,turnBiasRaw,XX,YY,turnBias_baseline,turnBias_during_baseline,turnBias_during_baseline_byRPos] =  ...
     getKNNProbTurnIn(f_orco, s, keyNdx, xGrid, yGrid, zGrid, ratio, ...
     Thresh, K, state, border, genotype, plotFig)%f_orco, condNdx
 % getKNNProbTurnIn  calculates the turn optimality in the KNN space
@@ -67,6 +67,7 @@ YY = cell(1,numel(state));
 turnBiasRaw = cell(1,numel(state));
 turnBias_baseline = cell(1,numel(state));
 turnBias_during_baseline = cell(1,numel(state));
+turnBias_during_baseline_byRPos = cell(1,numel(state));
 for currState = 1:numel(state)
 
     l = cellfun(@(c)strcmp(c,keyNdx),{state(currState)},'UniformOutput',false);
@@ -85,6 +86,7 @@ for currState = 1:numel(state)
         turnBias_before = (cell2mat(s.optimal(goodNdx_before,baselineIdx)));
         turnBias_during = (cell2mat(s.optimal(goodNdx_during,typeIdx)));
         turnBias_duringBaseline = (cell2mat(s.optimal(goodNdx_duringBaseline,during_baselineIdx)));
+        locStart_duringBaseline = (cell2mat(s.locStart(goodNdx_duringBaseline,during_baselineIdx)));
 %         turnBias_before(turnBias_before==-1) = 0;
 %         turnBias_during(turnBias_during==-1) = 0;
 %         turnBias_duringBaseline(turnBias_duringBaseline==-1) = 0;
@@ -99,7 +101,21 @@ for currState = 1:numel(state)
         turnBias_before = (cell2mat(s.optimal(goodNdx_before,baselineIdx)));
         turnBias_during = (cell2mat(s.optimal(goodNdx_during,typeIdx)));
         turnBias_duringBaseline = (cell2mat(s.optimal(goodNdx_duringBaseline,during_baselineIdx)));
+        locStart_duringBaseline = (cell2mat(s.locStart(goodNdx_duringBaseline,during_baselineIdx)));
     end
+    
+    dx = 0.5;
+    xx = [0:dx/2:4-dx]+dx/2;
+    turnBias_duringBaseline_byRPos = nan(1,numel(xx));
+    for i = 1:numel(xx)
+        tmp = turnBias_duringBaseline(locStart_duringBaseline>(xx(i)-dx/2) &...
+            locStart_duringBaseline<=(xx(i)+dx/2));
+        if length(tmp)>10
+            turnBias_duringBaseline_byRPos(i) = sum(tmp)./numel(tmp);
+        end
+    end
+    turnBias_during_baseline_byRPos{currState} = [xx;turnBias_duringBaseline_byRPos];
+
 
     allSpk = cell2mat(s.spkStart(goodNdx_during,typeIdx));
     alldSpk = cell2mat(s.dSpkStart(goodNdx_during,typeIdx));

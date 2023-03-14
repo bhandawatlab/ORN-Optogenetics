@@ -94,7 +94,7 @@ end
 % calculate turn bias only on states 1-3 (ST, CW, and stops, not boundary)
 stateTB = [1:3];state = self.states.key(stateTB);
 % calculate turn optimality
-[turnBias,turnBiasRaw,XX,YY,turnBias_baseline,turnBias_baseline_during] = ...
+[turnBias,turnBiasRaw,XX,YY,turnBias_baseline,turnBias_baseline_during,turnBias_during_baseline_byRPos] = ...
     getKNNProbTurnIn(self, s, keyNdx, xGrid, yGrid, ...
     zGrid,ratio, Thresh, K, state, opts.border, self.id, plotFig);
 % update turn optimality fields in the fly object
@@ -102,6 +102,7 @@ self.model.TurnBias.before = turnBias_baseline;
 self.model.TurnBias.during = turnBias;
 self.model.TurnBias.duringRaw = turnBiasRaw;
 self.model.TurnBias.during_baseline = turnBias_baseline_during;
+self.model.TurnBias.during_baseline_byRPos = turnBias_during_baseline_byRPos;
 self.model.TurnBias.key = self.states.key(stateTB);
 % update the KNN parameters used to calculate the turn optimality
 self.model.TurnBias.XX = XX{1}(:,:,1);
